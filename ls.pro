@@ -29,10 +29,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    arpactdev.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    arpactdev.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    arpactdev.ui
