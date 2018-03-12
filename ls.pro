@@ -5,8 +5,12 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+#配置winpacp
+INCLUDEPATH += WpdPack\Include
+LIBS += -L WpdPack/Lib/*.a
 
 TARGET = ls
 TEMPLATE = app
