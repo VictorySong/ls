@@ -8,10 +8,16 @@ QT       += core gui
 QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+#-------------------------------------------------
 #配置winpacp
 INCLUDEPATH += WpdPack\Include
-LIBS += -L WpdPack/Lib/*.a
-
+LIBS += -LC:\Users\Victory2\Documents\ls -lPacket\
+        -lwpcap\
+        -lWS2_32
+#-------------------------------------------------
+#编译预处理文件 可以增加编译速度
+PRECOMPILED_HEADER = stable.h
+#-------------------------------------------------
 TARGET = ls
 TEMPLATE = app
 
@@ -34,8 +40,13 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    arpactdev.h
+    arpactdev.h \
+    stable.h
 
 FORMS += \
         mainwindow.ui \
     arpactdev.ui
+OTHER_FILES += \
+            Packet.lib\
+            wpcap.lib\
+            WS2_32.lib
