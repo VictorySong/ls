@@ -11,8 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #-------------------------------------------------
 #配置winpacp
 INCLUDEPATH += WpdPack\Include
-LIBS += -LC:\Users\Victory2\Documents\ls -lPacket\
-        -lwpcap\
+LIBS += -L../ls/  \
+        -lPacket  \
+        -lwpcap  \
         -lWS2_32
 #-------------------------------------------------
 #编译预处理文件 可以增加编译速度
@@ -36,16 +37,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    arpactdev.cpp
+    arpactdev.cpp \
+    arpsendthread.cpp \
+    arpgetthread.cpp
 
 HEADERS += \
         mainwindow.h \
     arpactdev.h \
-    stable.h
+    stable.h \
+    arpsendthread.h \
+    arpgetthread.h
 
 FORMS += \
         mainwindow.ui \
     arpactdev.ui
+
 OTHER_FILES += \
             Packet.lib\
             wpcap.lib\
