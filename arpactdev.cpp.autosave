@@ -282,14 +282,13 @@ void arpactdev::on_ipcombox_currentIndexChanged(const QString &arg1)
 
         //跳转到选中的适配器
         d = usabledev[num];
-//        if(adhandle!= NULL)
-//            pcap_close(adhandle);
+
         if(newadhandle()){
 
-            updatedev_tip();
-            if(!checknetstate.isRunning()){
-                checknetstate.start();
-            }
+//            updatedev_tip();
+//            if(!checknetstate.isRunning()){
+//                checknetstate.start();
+//            }
         }
     }
 
@@ -318,6 +317,8 @@ bool arpactdev::newadhandle()
 
     ifget(d, ip_addr, ip_netmask,tem_netmask); //获取所选网卡的基本信息--掩码--IP地址
     struct bpf_program fcode;
+    //设置过滤 只抓取arp类型包
+    
     if(pcap_compile(adhandle,&fcode,"arp",1,tem_netmask)<0)
     {
         qDebug()<<"设置过滤出错";

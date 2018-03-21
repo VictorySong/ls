@@ -6,6 +6,7 @@
 #include <QWidget>
 #include "arpsendthread.h"
 #include "arpgetthread.h"
+#include "checknet.h"
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12
@@ -57,14 +58,9 @@ struct ArpPacket {
     Arpheader ah;
 };
 
-struct sparam {
-    pcap_t *adhandle;
-    char *ip;
-    unsigned char *mac;
-    char *netmask;
-};
-struct gparam {
-    pcap_t *adhandle;
+struct actdevinf{
+    QString mac;            //mac 地址
+    bool    tcpconsta;          //tcp连接状态
 };
 
 
@@ -82,38 +78,55 @@ public:
 
 private:
     Ui::arpactdev *ui;
-public:
+    bool flag;                      //ip地址是否可用的标志
     char *ip_addr;                                    //IP地址
     char *ip_netmask;                             //子网掩码
     unsigned char *ip_mac;          //本机MAC地址
-    QHash<QString,QString> actmac;      //活动设备的mac地址
-
-    bool flag;                      //ip地址是否可用的标志
-    pcap_if_t *alldevs;
-    char errbuf[PCAP_ERRBUF_SIZE];
-    int dev_num;                            //适配器计数变量
-    pcap_if_t *d;
-    QVector <pcap_if_t *> usabledev;
+    pcap_if_t *alldevs;               //所有适配器
+    pcap_if_t *d;                       //当前适配器
     pcap_t *adhandle;           //捕捉实例,是pcap_open返回的对象
 
+public:
+    friend class arpgetthread;
+    friend class arpsendthread;
+    friend class checknet;
+
+    QHash<QString,actdevinf> actmac;      //活动设备的mac地址
+    char errbuf[PCAP_ERRBUF_SIZE];
+    int dev_num;                            //适配器计数变量
+
+    QVector <pcap_if_t *> usabledev;
+
+    bool newadhandle();                 //
     int init();
     QString iptos(u_long in);       //转换ip地址为qstring 格式
     QString mactos(unsigned char* mac);  //转换mac地址为qstring 格式
-    void ifget(pcap_if_t *d, char *ip_addr, char *ip_netmask);
+    void ifget(pcap_if_t *d, char *ip_addr, char *ip_netmask ,unsigned int &unetmask);
     int GetSelfMac(pcap_t *adhandle, const char *ip_addr, unsigned char *ip_mac);
     void upmactab();            //更新活动主机ip及mac显示
+    QString actmackey(QString t);//获取actmac 中mac值为t的 key 无则返回空字符串
+
+    void nonetwork(bool t);            //无网络连接时设置格式
+    int pcap_get(pcap_t* thandle,pcap_pkthdr ** pcap_h,const u_char **pcap_d);    //为pcap_next_ex 加线程锁
 
 private slots:
     void on_ipcombox_currentIndexChanged(const QString &arg1);
     void on_label_linkActivated(const QString &link);
     void on_getmacbutton_clicked();
     void getactmac(unsigned long ip,QString mac);  //接收局域网内活动主机mac信号，更新actmac
-
+    void updatedev_tip();       //更新网络状态显示窗口
     void on_pushButton_clicked();
+
+    void on_listentcpport_clicked();
+
+    void on_ipcombox_currentIndexChanged(int index);
 
 private:
     arpsendthread arpth;                //发送arp探测包的线程
     arpgetthread arpgth;                //获取arp探测包的线程
+    checknet checknetstate;             //更新现在网络状态      每两秒更新一次
+    QTcpServer *tcpServer;              //tcp监听
+    mutable QMutex mutex;               //锁保证线程安全
 
 };
 #endif // ARPACTDEV_H

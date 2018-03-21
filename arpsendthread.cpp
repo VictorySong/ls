@@ -32,7 +32,7 @@ void arpsendthread::run()
 
     unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
 
-    for(int i = 0; i<num ;i++)
+    for(unsigned int i = 0; i<num ;i++)
     {
         if(!stopped){
             ah.DestIpAdd = htonl(toip+i);
@@ -46,12 +46,12 @@ void arpsendthread::run()
         }else{
             break;
         }
-
-
     }
-    msleep(2000);
+
+    //msleep(1000);
     emit sendall();       //发送结束信号
     stopped = false;
+
 
 }
 

@@ -66,7 +66,8 @@ void arpgetthread::run()
             }
         }else if(res==0){
             if(sendflag){
-
+                
+      
             }
             if (pcap_sendpacket(arpinf->adhandle, sendbuf, 42) == 0) {
                 sendflag = true;

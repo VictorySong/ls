@@ -11,13 +11,14 @@ class arpgetthread : public QThread
 public:
     arpgetthread();
     arpactdev *arpinf;                  //存储本地ip信息
-    void stop();
 protected:
     void run();                     //运行线程
 private:
-    volatile bool stopped;          //线程是否结束的标志
+    volatile bool sendthreadstopped;          //发送探测活动mac线程是否结束标志
+    volatile bool sendthreadbegin;             //发送探测活动mac线程是否开始表示
 public slots:
-    void sendallarp();              //发送arp探测包完后会触发此槽函数，结束监听进程
+    void sendallarp();              //发送完mac探测包后会触发此槽函数
+    void sendmacarpbegin();         //开始发送mac探测包后触发此槽函数
 signals:
     void sendactmac(unsigned long ip,QString mac); //发送更新局域网内活动主机mac地址信号
 public:

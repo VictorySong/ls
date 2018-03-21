@@ -14,6 +14,7 @@
 #include <QThread>
 #include <QObject>
 #include <QHash>
+#include <QtNetwork>
 
 
 
