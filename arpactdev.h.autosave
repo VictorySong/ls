@@ -114,7 +114,6 @@ private slots:
     bool newadhandle();
     void on_pushButton_clicked();
     void on_listentcpport_clicked();
-    void on_ipcombox_currentIndexChanged(int index);
 
     void udpget();                  //接受udp 槽函数
     void tcpserversend();               //tcp 服务端发送函数
@@ -137,6 +136,10 @@ private:
     quint16 blockSize; //存放文件的大小信息
 
     mutable QMutex mutex;               //锁保证线程安全
+    
+public:
+    QString tcpserver_ip;
+    int tcpserver_port;
 
 };
 #endif // ARPACTDEV_H

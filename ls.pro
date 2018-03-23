@@ -39,16 +39,14 @@ SOURCES += \
         mainwindow.cpp \
     arpactdev.cpp \
     arpsendthread.cpp \
-    arpgetthread.cpp \
-    checknet.cpp
+    arpgetthread.cpp
 
 HEADERS += \
         mainwindow.h \
     arpactdev.h \
     stable.h \
     arpsendthread.h \
-    arpgetthread.h \
-    checknet.h
+    arpgetthread.h
 
 FORMS += \
         mainwindow.ui \

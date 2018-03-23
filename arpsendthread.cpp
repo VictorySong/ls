@@ -29,8 +29,8 @@ void arpsendthread::run()
     unsigned long myip = inet_addr(arpinf->ip_addr);
     unsigned long mynetmask = inet_addr(arpinf->ip_netmask);
     unsigned long toip = htonl((myip & mynetmask));
-
     unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
+
 
     for(unsigned int i = 0; i<num ;i++)
     {
@@ -47,12 +47,9 @@ void arpsendthread::run()
             break;
         }
     }
-
-    //msleep(1000);
+    sleep(1);               //发送完毕一秒钟后发送信号
     emit sendall();       //发送结束信号
     stopped = false;
-
-
 }
 
 void arpsendthread::stop()
