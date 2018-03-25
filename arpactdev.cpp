@@ -249,7 +249,7 @@ bool arpactdev::newadhandle()
         if ((adhandle = pcap_open(d->name,        //设备名称
             60,       //存放数据包的内容长度
             PCAP_OPENFLAG_PROMISCUOUS,  //混杂模式
-            2000,           //超时时间
+            100,           //超时时间
             NULL,          //远程验证
             errbuf         //错误缓冲
         )) == NULL) {
@@ -420,10 +420,7 @@ int arpactdev::pcap_send(pcap_t *a, const u_char *b, int c)
     return pcap_sendpacket(a,b,c);
 }
 
-void arpactdev::on_ipcombox_currentIndexChanged(int index)
-{
 
-}
 
 
 void arpactdev::udpget()
@@ -436,6 +433,14 @@ void arpactdev::udpget()
        //接收数据报，将其存放到datagram中
        udpServer->readDatagram(datagram.data(),datagram.size());
        //将数据报内容显示出来
+       QJsonParseError error;
+       QJsonDocument jsondoc = QJsonDocument::fromJson(datagram,&error);
+       QVariantMap result = jsondoc.toVariant().toMap();
+       qDebug()<<"ip:"<<result["ip"].toString();
+       qDebug()<<"port:"<<result["port"].toInt();
+       tcpserver_ip = result["ip"].toString();
+       tcpserver_port = result["port"].toInt();
+
        ui->udpget->setText(datagram);
     }
 }

@@ -55,8 +55,7 @@ void arpgetthread::run()
                 qDebug()<<"获取自己主机的MAC地址成功!thread";
 
                 emit sendnetstate(true);            //网络可用
-
-
+                msleep(3000);
             }
         }else if(res==0){
             if(sendflag){
