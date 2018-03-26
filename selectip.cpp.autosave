@@ -21,6 +21,8 @@ selectip::~selectip()
 void selectip::updateipcombox()
 {
     QList<QString> tem = arp->getusableip();
+    if(tem.length() == 0)
+        exit(1);
     ui->ipcomboBox->insertItems(0,tem);
 }
 

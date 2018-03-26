@@ -5,6 +5,9 @@ winpcap::winpcap()
     ip_addr = (char *)malloc(sizeof(char) * 16); //申请内存存放IP地址
     ip_netmask = (char *)malloc(sizeof(char) * 16); //申请内存存放NETMASK地址
     ip_mac = (unsigned char *)malloc(sizeof(unsigned char) * 6); //申请内存存放MAC地址
+    sthread = new sendarp(this);
+    gthread = new getarp(this);
+    connect(sthread,SIGNAL(finished()),gthread,SLOT(stop()));
     dev_num = 0; //初始化适配器数量为0
     this->adhandle = NULL;
 }
@@ -14,6 +17,12 @@ winpcap::~winpcap()
     delete ip_addr;
     delete ip_netmask;
     delete ip_mac;
+    sthread->terminate();
+    sthread->wait();
+    gthread->terminate();
+    gthread->wait();
+    delete sthread;
+    delete gthread;
     pcap_freealldevs(alldevs);
 }
 
@@ -244,18 +253,60 @@ QString winpcap::getselfmac()
         }
         i++;
     }
-    if(i<4)
-        return macos();
+    if(i<4 && res>0)
+        return macos(ip_mac);
     else
         return QString("");
 }
 
-QString winpcap::macos()
+QString winpcap::macos(unsigned char *mac)
 {
-    return QString("%1-%2-%3-%4-%5-%6").arg(ip_mac[0],2,16).arg(ip_mac[1],2,16).arg(ip_mac[2],2,16).arg(ip_mac[3],2,16).arg(ip_mac[4],2,16).arg(ip_mac[5],2,16);
+    if(NULL == mac)
+        mac = ip_mac;
+    return QString("%1-%2-%3-%4-%5-%6").arg(mac[0],2,16).arg(mac[1],2,16).arg(mac[2],2,16).arg(mac[3],2,16).arg(mac[4],2,16).arg(mac[5],2,16);
 }
 
 QString winpcap::getnetmask()
 {
     return QString("%1").arg(ip_netmask);
+}
+
+void winpcap::getactmac()
+{
+    actmac.clear();
+    if(!gthread->isRunning())
+        gthread->start();
+    if(!sthread->isRunning())
+        sthread->start();
+}
+
+bool winpcap::getintstatus()
+{
+    GetSelfMac();
+    return getsendarp();
+}
+
+int winpcap::pcap_send(const u_char *buff, int size)
+{
+    return pcap_sendpacket(adhandle,buff,size);
+}
+
+void winpcap::getip_mac(unsigned char *mac)
+{
+    memcpy(mac,ip_mac,6);
+}
+
+void winpcap::getip(char *ip)
+{
+    memcpy(ip,ip_addr,16);
+}
+
+void winpcap::getnetmask(char *netmask)
+{
+    memcpy(netmask,ip_netmask,16);
+}
+
+QString winpcap::getip()
+{
+    return QString("%1").arg(ip_addr);
 }

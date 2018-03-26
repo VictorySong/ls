@@ -76,16 +76,27 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButton">
          <property name="text">
-          <string>获取本机mac</string>
+          <string>获取活动mac</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>打开服务端</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_2">
          <property name="text">
-          <string>获取活动mac</string>
+          <string>打开客户端</string>
          </property>
         </widget>
        </item>

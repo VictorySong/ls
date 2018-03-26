@@ -41,7 +41,10 @@ SOURCES += \
     arpsendthread.cpp \
     arpgetthread.cpp \
     winpcap.cpp \
-    selectip.cpp
+    selectip.cpp \
+    sendarp.cpp \
+    getarp.cpp \
+    server.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,12 +53,16 @@ HEADERS += \
     arpsendthread.h \
     arpgetthread.h \
     winpcap.h \
-    selectip.h
+    selectip.h \
+    sendarp.h \
+    getarp.h \
+    server.h
 
 FORMS += \
         mainwindow.ui \
     arpactdev.ui \
-    selectip.ui
+    selectip.ui \
+    server.ui
 
 OTHER_FILES += \
             Packet.lib\

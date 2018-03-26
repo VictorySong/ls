@@ -17,9 +17,9 @@ public:
     ~selectip();
 
 private slots:
-    void on_pushButton_2_clicked();
-
     void on_pushButton_clicked();
+
+    void on_ipcomboBox_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::selectip *ui;
