@@ -39,18 +39,23 @@ SOURCES += \
         mainwindow.cpp \
     arpactdev.cpp \
     arpsendthread.cpp \
-    arpgetthread.cpp
+    arpgetthread.cpp \
+    winpcap.cpp \
+    selectip.cpp
 
 HEADERS += \
         mainwindow.h \
     arpactdev.h \
     stable.h \
     arpsendthread.h \
-    arpgetthread.h
+    arpgetthread.h \
+    winpcap.h \
+    selectip.h
 
 FORMS += \
         mainwindow.ui \
-    arpactdev.ui
+    arpactdev.ui \
+    selectip.ui
 
 OTHER_FILES += \
             Packet.lib\
