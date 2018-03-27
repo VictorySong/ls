@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     winpcap *winpcap_t = new winpcap();
     winpcap_t->init();
     selectip se(0,winpcap_t);
-    server sev(0,winpcap_t);
     se.show();
 
 //    arpactdev arp;

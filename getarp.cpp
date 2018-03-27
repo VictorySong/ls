@@ -32,12 +32,8 @@ void getarp::run()
                     actdevinf tem;
                     tem.mac = mac;
                     tem.tcpconsta = false;
+                    arp->actmac.insert(ip,tem);
 
-                    if(arp->actmac.contains(ip)){
-                        arp->actmac.value(ip,tem);
-                    }else{
-                        arp->actmac.insert(ip,tem);
-                    }
                 }
             }
         }

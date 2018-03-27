@@ -44,7 +44,11 @@ SOURCES += \
     selectip.cpp \
     sendarp.cpp \
     getarp.cpp \
-    server.cpp
+    server.cpp \
+    client.cpp \
+    tcpsocket.cpp \
+    tcpserver.cpp \
+    udpbroad.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,13 +60,18 @@ HEADERS += \
     selectip.h \
     sendarp.h \
     getarp.h \
-    server.h
+    server.h \
+    client.h \
+    tcpsocket.h \
+    tcpserver.h \
+    udpbroad.h
 
 FORMS += \
         mainwindow.ui \
     arpactdev.ui \
     selectip.ui \
-    server.ui
+    server.ui \
+    client.ui
 
 OTHER_FILES += \
             Packet.lib\
