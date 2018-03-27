@@ -37,9 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    arpactdev.cpp \
-    arpsendthread.cpp \
-    arpgetthread.cpp \
     winpcap.cpp \
     selectip.cpp \
     sendarp.cpp \
@@ -52,10 +49,7 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    arpactdev.h \
     stable.h \
-    arpsendthread.h \
-    arpgetthread.h \
     winpcap.h \
     selectip.h \
     sendarp.h \
