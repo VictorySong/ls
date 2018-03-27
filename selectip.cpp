@@ -5,6 +5,7 @@ selectip::selectip(QWidget *parent,winpcap *tem) :
     QWidget(parent),
     ui(new Ui::selectip)
 {
+    setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
     if(tem == NULL)
         exit(1);
@@ -20,6 +21,7 @@ selectip::~selectip()
 {
     delete ui;
     delete arp;
+    exit(1);
 }
 
 void selectip::updateipcombox()

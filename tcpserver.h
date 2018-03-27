@@ -11,6 +11,8 @@ public:
     QList<tcpsocket*> tcpClientSocketList;
 signals:
     void updateServer(QByteArray,tcpsocket *);
+    void newclientsocket(tcpsocket *);
+    void disconnected(tcpsocket *);
 public slots:
     void updateClients(QByteArray,tcpsocket *);
     void slotDisconnected(tcpsocket *);

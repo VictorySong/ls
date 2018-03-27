@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>475</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,7 +77,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>广播当前ip和端口</string>
+          <string>已有信息</string>
          </property>
         </widget>
        </item>
@@ -130,10 +130,25 @@
       </layout>
      </item>
      <item>
-      <widget class="QTreeWidget" name="treeWidget">
+      <widget class="QTableWidget" name="tableWidget">
        <column>
         <property name="text">
          <string>已连接ip</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>端口</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>横坐标x</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>纵坐标y</string>
         </property>
        </column>
       </widget>

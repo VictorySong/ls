@@ -15,8 +15,7 @@ void udpbroad::run()
 {
     while(!stopped){
         udpsender->writeDatagram(block,QHostAddress(multicast),toport);
-        qDebug()<<"已广播ip和端口";
-        msleep(2000);           //每一秒向局域网内广播一次ip
+        msleep(1000);           //每一秒向局域网内广播一次ip
     }
 }
 

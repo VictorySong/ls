@@ -22,13 +22,45 @@ void tcpserver::incomingConnection(int socketDescriptor)
     tcpClientSocket->setSocketDescriptor(socketDescriptor);
     //将tcpClientSocket加入客户端套接字列表以便管理
     tcpClientSocketList.append(tcpClientSocket);
+    emit newclientsocket(tcpClientSocket);
     qDebug()<<tcpClientSocketList;
 }
 
 void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
 {
-    qDebug()<<mes;
     emit updateServer(mes,clientsocket);
+    //添加信息内容，标明来源
+    QString ip = clientsocket->peerAddress().toString();
+    quint16 port = clientsocket->peerPort();
+    QJsonParseError error;
+    QJsonDocument jsondoc = QJsonDocument::fromJson(mes,&error);       //转化成json对象
+    QJsonObject tem = jsondoc.object();
+    tem.insert(QString("ip"),ip);
+    tem.insert(QString("port"),port);
+    QJsonDocument tem2;
+    tem2.setObject(tem);
+    QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
+
+    QByteArray block;
+    //使用数据流写入数据
+    QDataStream out(&block,QIODevice::WriteOnly);
+    //设置数据流的版本，客户端和服务器端使用的版本要相同
+    out.setVersion(QDataStream::Qt_4_6);
+    out<<tem3;          //不用数据流也可以，此处使用方便以后拓展
+
+
+
+    //将位置信息转发到其他ip
+    for(int i=0;i<tcpClientSocketList.count();i++)
+    {
+        QTcpSocket *item = tcpClientSocketList.at(i);
+        if(item->peerAddress().toString() != ip){
+            item->write(block);
+        }else if(item->peerPort() != port){
+            item->write(block);
+        }
+    }
+
 }
 
 void tcpserver::slotDisconnected(tcpsocket *clientsocket)
@@ -40,6 +72,7 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
         if(item->socketDescriptor()== t)
         {
             tcpClientSocketList.removeAt(i);
+            emit disconnected(clientsocket);
             qDebug()<<"断开连接";
             return;
         }
