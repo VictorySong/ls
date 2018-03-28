@@ -29,8 +29,10 @@ selectip::~selectip()
 void selectip::updateipcombox()
 {
     QList<QString> tem = arp->getusableip();
-    if(tem.length() == 0)
+    if(tem.length() == 0){
+        QMessageBox::information(this,QString("提示："),QString("无可用ip，程序即将退出！"));
         exit(1);
+    }
     ui->ipcomboBox->insertItems(0,tem);
 }
 

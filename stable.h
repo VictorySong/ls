@@ -15,6 +15,7 @@
 #include <QObject>
 #include <QHash>
 #include <QtNetwork>
+#include <QMessageBox>
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12
