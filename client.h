@@ -28,6 +28,7 @@ public slots:
     void udpget();                      //处理接收到的udp信息
     void tcpconnected();                //连接成功后
     void newdata(QByteArray,tcpsocket*);        //有新数据到达时
+    void tcpdisconnect();               //tcp连接断开时
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();

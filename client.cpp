@@ -19,6 +19,7 @@ client::client(QWidget *parent ,winpcap *tem) :
     connect(udpServer,SIGNAL(readyRead()),this,SLOT(udpget()));             //收到服务器ip和端口信息后立即进行tcp连接并关闭udpsocket句柄
     connect(tcpsender,SIGNAL(connected()),this,SLOT(tcpconnected()));
     connect(tcpsender,SIGNAL(updateClients(QByteArray,tcpsocket*)),this,SLOT(newdata(QByteArray,tcpsocket*)));  //接收数据
+    connect(tcpsender,SIGNAL(disconnected()),this,SLOT(tcpdisconnect()));                  //连接断开后
 }
 
 client::~client()
@@ -141,4 +142,9 @@ void client::on_pushButton_4_clicked()
     ui->x->setText(QString("%1").arg(x));
     ui->y->setText(QString("%1").arg(y));
     emit ui->pushButton_3->clicked();
+}
+
+void client::tcpdisconnect()
+{
+    ui->pushButton->setText(QString("连接已断开，点击发起连接"));
 }
