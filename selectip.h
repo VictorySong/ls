@@ -33,6 +33,9 @@ private:
     server *ser;                            //服务端窗口
     client *cli;                            //客户端窗口
     void updateipcombox();                          //更新ipcombox
+public slots:
+    void updatealivemactable();             //更新显示活动mac地址的窗口
+    void newser(QObject*);                  //服务器窗口摧毁后执行
 };
 
 #endif // SELECTIP_H

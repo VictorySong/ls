@@ -14,7 +14,9 @@ selectip::selectip(QWidget *parent,winpcap *tem) :
     cli = NULL;
 //    ser = new server(0,arp);
 //    cli = new client(0,arp);
-    updateipcombox();
+    updateipcombox();       //获得可用ip地址
+    //关联活动mac监听进程结束信号，更新活动mac列表
+    connect(arp,SIGNAL(updatealivemac()),this,SLOT(updatealivemactable()));
 }
 
 selectip::~selectip()
@@ -51,9 +53,11 @@ void selectip::on_ipcomboBox_currentIndexChanged(const QString &arg1)
 
 void selectip::on_pushButton_3_clicked()
 {
-    qDebug()<<(void *)ser;
-    if(ser == NULL)
+    if(NULL == ser){
         ser = new server(0,arp);
+        ser->setWindowTitle(QString("中控"));
+        connect(ser,SIGNAL(destroyed(QObject*)),this,SLOT(newser(QObject*)));  //服务器窗口摧毁后进行
+    }
     if(ser->isHidden())
         ser->show();
 }
@@ -65,5 +69,26 @@ void selectip::on_pushButton_2_clicked()
 //    if(cli->isHidden())
 //        cli->show();
     cli = new client(0,arp);
+    cli->setWindowTitle(QString("小卫星"));
     cli->show();
+}
+
+void selectip::updatealivemactable()
+{
+    ui->tableWidget->clear();
+    ui->tableWidget->setRowCount(0);
+    QMapIterator<QString,actdevinf> i(arp->actmac);
+    int row = ui->tableWidget->rowCount();
+    while(i.hasNext()){
+        i.next();
+        ui->tableWidget->setRowCount(row+1);
+        ui->tableWidget->setItem(row,0,new QTableWidgetItem(i.key()));
+        ui->tableWidget->setItem(row,1,new QTableWidgetItem(i.value().mac));
+        row++;
+    }
+}
+
+void selectip::newser(QObject *)
+{
+    ser = NULL;
 }

@@ -39,5 +39,6 @@ void getarp::run()
         }
     }
     qDebug()<<"接收线程关闭";
+    emit arp->updatealivemac();             //发送更新活动mac的信号
     stopped = false;
 }

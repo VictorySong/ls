@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     winpcap *winpcap_t = new winpcap();
     winpcap_t->init();
     selectip se(0,winpcap_t);
+    se.setWindowTitle(QString("选择要用的ip地址"));
     se.show();
 
 //    arpactdev arp;

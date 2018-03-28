@@ -11,6 +11,8 @@ class winpcap :public QObject
 public:
     winpcap();
     ~winpcap();
+signals:
+    void updatealivemac();
 private:
     bool flag;                      //ip地址是否可用的标志
     char *ip_addr;                                    //IP地址

@@ -8,6 +8,7 @@ winpcap::winpcap()
     sthread = new sendarp(this);
     gthread = new getarp(this);
     connect(sthread,SIGNAL(finished()),gthread,SLOT(stop()));
+
     dev_num = 0; //初始化适配器数量为0
     this->adhandle = NULL;
 }
