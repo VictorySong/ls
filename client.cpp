@@ -15,6 +15,21 @@ client::client(QWidget *parent ,winpcap *tem) :
 
     if(!udpServer->bind(QHostAddress(arp->getip()),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         qDebug()<<"udp接受端绑定端口出错";
+
+    //获取局域网广播地址
+    char ip[16];
+    char netmask[16];
+    arp->getip(ip);
+    arp->getnetmask(netmask);
+    unsigned long myip = inet_addr(ip);
+    unsigned long mynetmask = inet_addr(netmask);
+    unsigned long toip = htonl((myip & mynetmask));
+    unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
+    toip += num;
+    toip = htonl(toip);
+    ui->multicastip->setText(arp->iptos(toip));
+
+    //采用多播模式会有客户端接收不到的情况
     udpServer->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
     connect(udpServer,SIGNAL(readyRead()),this,SLOT(udpget()));             //收到服务器ip和端口信息后立即进行tcp连接并关闭udpsocket句柄
     connect(tcpsender,SIGNAL(connected()),this,SLOT(tcpconnected()));

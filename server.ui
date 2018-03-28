@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>udp多播地址：</string>
+          <string>udp广播地址：</string>
          </property>
         </widget>
        </item>
@@ -31,7 +31,7 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>237.21.22.68</string>
+          <string>239.255.43.21</string>
          </property>
         </widget>
        </item>

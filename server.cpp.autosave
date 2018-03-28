@@ -13,6 +13,7 @@ server::server(QWidget *parent,winpcap *tem) :
     udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
     tcpServer = new tcpserver(this);                   //实例化tcpserver对象
     udpsender->bind(QHostAddress(arp->getip()),0);
+    
     //获取局域网广播地址
     char ip[16];
     char netmask[16];
@@ -24,7 +25,7 @@ server::server(QWidget *parent,winpcap *tem) :
     unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
     toip += num;
     toip = htonl(toip);
-    ui->multicastip->setText(arp->iptos(toip));
+    ui->multicastip->setText(arp->iptos(toip));         //设置udp广播地址
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));

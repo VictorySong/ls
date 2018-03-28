@@ -9,6 +9,7 @@ tcpserver::tcpserver(QObject *parent):
 
 void tcpserver::incomingConnection(int socketDescriptor)
 {
+    qDebug()<<"有新连接请求";
     //创建一个新的TcpClientSocket与客户端通信
     tcpsocket *tcpClientSocket=new tcpsocket(this);
     //连接TcpClientSocket的updateClients（）信号
