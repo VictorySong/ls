@@ -13,6 +13,8 @@ public:
     ~winpcap();
 signals:
     void updatealivemac();
+    void setmaxprogressbar(unsigned long);              //设置进度条最大值
+    void setprogressbar(unsigned long);                 //设置进度条的值
 private:
     bool flag;                      //ip地址是否可用的标志
     char *ip_addr;                                    //IP地址
@@ -49,6 +51,9 @@ public:
     void getip(char *ip);                               //获取char* 类型的ip地址
     void getnetmask(char *netmask);                     //获取char* 类型的子网掩码
     QString getip();                                    //获取qstring 类型的ip地址
+public slots:
+    void maxprogressbar(unsigned long);
+    void progressbar(unsigned long);
 
 };
 

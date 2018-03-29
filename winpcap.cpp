@@ -8,6 +8,9 @@ winpcap::winpcap()
     sthread = new sendarp(this);
     gthread = new getarp(this);
     connect(sthread,SIGNAL(finished()),gthread,SLOT(stop()));
+    //关联设置进度条的信号
+    connect(sthread,SIGNAL(setmaxprogressbar(ulong)),this,SLOT(maxprogressbar(ulong)));
+    connect(sthread,SIGNAL(setprogressbar(ulong)),this,SLOT(progressbar(ulong)));
 
     dev_num = 0; //初始化适配器数量为0
     this->adhandle = NULL;
@@ -310,4 +313,14 @@ void winpcap::getnetmask(char *netmask)
 QString winpcap::getip()
 {
     return QString("%1").arg(ip_addr);
+}
+
+void winpcap::maxprogressbar(unsigned long t)
+{
+    emit setmaxprogressbar(t);
+}
+
+void winpcap::progressbar(unsigned long t)
+{
+    emit setprogressbar(t);
 }

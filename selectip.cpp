@@ -7,6 +7,8 @@ selectip::selectip(QWidget *parent,winpcap *tem) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
+    ui->progressBar->hide();                //进度条隐藏
+
     if(tem == NULL)
         exit(1);
     arp = tem;
@@ -17,6 +19,8 @@ selectip::selectip(QWidget *parent,winpcap *tem) :
     updateipcombox();       //获得可用ip地址
     //关联活动mac监听进程结束信号，更新活动mac列表
     connect(arp,SIGNAL(updatealivemac()),this,SLOT(updatealivemactable()));
+    connect(arp,SIGNAL(setmaxprogressbar(ulong)),this,SLOT(setmaxprogressbar(ulong)));
+    connect(arp,SIGNAL(setprogressbar(ulong)),this,SLOT(setprogressbar(ulong)));
 }
 
 selectip::~selectip()
@@ -93,4 +97,17 @@ void selectip::updatealivemactable()
 void selectip::newser(QObject *)
 {
     ser = NULL;
+}
+
+void selectip::setmaxprogressbar(unsigned long t)
+{
+    ui->progressBar->show();
+    ui->progressBar->setMaximum((int)t);
+}
+
+void selectip::setprogressbar(unsigned long t)
+{
+    ui->progressBar->setValue((int)t);
+    if(ui->progressBar->maximum() == (int)t)
+        ui->progressBar->hide();
 }

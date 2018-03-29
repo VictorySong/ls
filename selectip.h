@@ -36,6 +36,8 @@ private:
 public slots:
     void updatealivemactable();             //更新显示活动mac地址的窗口
     void newser(QObject*);                  //服务器窗口摧毁后执行
+    void setmaxprogressbar(unsigned long);          //设置进度条总长
+    void setprogressbar(unsigned long);             //设置进度条现长度
 };
 
 #endif // SELECTIP_H

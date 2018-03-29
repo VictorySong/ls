@@ -37,7 +37,7 @@ void sendarp::run()
     unsigned long toip = htonl((myip & mynetmask));
     unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
 
-
+    emit setmaxprogressbar(num);            //发送设置进度条最大值的信号
     for(unsigned long i = 0; i<num ;i++)
     {
         if(!stopped){
@@ -46,13 +46,14 @@ void sendarp::run()
             memcpy(sendbuf,&eh,sizeof(eh));
             memcpy(sendbuf+sizeof(eh),&ah,sizeof(ah));
             if(arp->pcap_send(sendbuf,42)==0){
-
+                emit setprogressbar(i);             //发送设置进度条值的信号
             }
-            msleep(2);
+            msleep(0.1);
         }else{
             break;
         }
     }
+    emit setprogressbar(num);
     msleep(300);
     qDebug()<<"发送线程关闭";
     stopped = false;

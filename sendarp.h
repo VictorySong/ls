@@ -14,6 +14,9 @@ private:
     winpcap *arp;
 protected:
     void run();                     //运行线程
+signals:
+    void setmaxprogressbar(unsigned long);         //发送进度条总长度
+    void setprogressbar(unsigned long);             //当前进度
 
 };
 
