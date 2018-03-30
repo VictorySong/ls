@@ -12,6 +12,7 @@ void tcpserver::incomingConnection(int socketDescriptor)
     qDebug()<<"有新连接请求";
     //创建一个新的TcpClientSocket与客户端通信
     tcpsocket *tcpClientSocket=new tcpsocket(this);
+
     //连接TcpClientSocket的updateClients（）信号
     connect(tcpClientSocket,SIGNAL(updateClients(QByteArray,tcpsocket *)),
             this,SLOT(updateClients(QByteArray,tcpsocket *)));
@@ -21,6 +22,18 @@ void tcpserver::incomingConnection(int socketDescriptor)
             this,SLOT(slotDisconnected(tcpsocket *)));
     //将新创建的TcpClientSocket的套接字描述符指定为参数socketDescriptor
     tcpClientSocket->setSocketDescriptor(socketDescriptor);
+
+    //请求是否同意连接
+    QString tem = QString("有新的连接请求，IP：%1  端口：%2 是否同意连接").arg(tcpClientSocket->peerAddress().toString()).arg(tcpClientSocket->peerPort());
+    if(QMessageBox::No == QMessageBox::question(0,
+                                                 tr("Question"),
+                                                 tem,
+                                                 QMessageBox::Yes | QMessageBox::No,
+                                                QMessageBox::No)){
+        tcpClientSocket->close();
+        return;
+    }
+
     //将tcpClientSocket加入客户端套接字列表以便管理
     tcpClientSocketList.append(tcpClientSocket);
     emit newclientsocket(tcpClientSocket);
