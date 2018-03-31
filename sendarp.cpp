@@ -54,7 +54,7 @@ void sendarp::run()
         }
     }
     emit setprogressbar(num);
-    msleep(300);
+    msleep(400);
     qDebug()<<"发送线程关闭";
     stopped = false;
 }

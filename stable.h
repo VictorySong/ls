@@ -72,6 +72,10 @@ struct actdevinf{
     bool    tcpconsta;          //tcp连接状态
 };
 
+struct inf{
+    float x;            //卫星横坐标
+    float y;            //卫星纵坐标
+}
 
 
 
