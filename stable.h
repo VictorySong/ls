@@ -75,7 +75,7 @@ struct actdevinf{
 struct inf{
     float x;            //卫星横坐标
     float y;            //卫星纵坐标
-}
+};
 
 
 
