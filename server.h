@@ -36,10 +36,6 @@ public slots:
     void updatetabelwidget(QByteArray,tcpsocket *);         //更新已有连接界面显示
     void updatenewclient(tcpsocket *);                      //有新连接时更新界面显示
     void disconnected(tcpsocket *);                         //有连接断开时更新视图
-
-protected:
-    void paintEvent(QPaintEvent *);
-
 };
 
 #endif // SERVER_H
