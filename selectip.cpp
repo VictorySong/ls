@@ -14,8 +14,6 @@ selectip::selectip(QWidget *parent,winpcap *tem) :
     arp = tem;
     ser = NULL;
     cli = NULL;
-//    ser = new server(0,arp);
-//    cli = new client(0,arp);
     updateipcombox();       //获得可用ip地址
     //关联活动mac监听进程结束信号，更新活动mac列表
     connect(arp,SIGNAL(updatealivemac()),this,SLOT(updatealivemactable()));
@@ -70,13 +68,14 @@ void selectip::on_pushButton_3_clicked()
 
 void selectip::on_pushButton_2_clicked()
 {
-//    if(cli == NULL)
-//        cli = new client(0,arp);
-//    if(cli->isHidden())
-//        cli->show();
-    cli = new client(0,arp);
-    cli->setWindowTitle(QString("小卫星"));
-    cli->show();
+    bool ok;
+    int text = QInputDialog::getInt(this,QString("请输入卫星编号"),QString("卫星编号:"),0,0,200000,1,&ok);
+    if(ok){
+        cli = new client(0,arp,text);
+        cli->setWindowTitle(QString("小卫星"));
+        cli->show();
+    }
+
 }
 
 void selectip::updatealivemactable()

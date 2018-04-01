@@ -16,7 +16,7 @@ class client : public QWidget
     Q_OBJECT
 
 public:
-    explicit client(QWidget *parent = 0,winpcap * tem = NULL);
+    explicit client(QWidget *parent = 0,winpcap * tem = NULL,int m = 0);
     ~client();
 
 private:

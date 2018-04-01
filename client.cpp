@@ -1,12 +1,13 @@
 #include "client.h"
 #include "ui_client.h"
 
-client::client(QWidget *parent ,winpcap *tem) :
+client::client(QWidget *parent ,winpcap *tem,int m) :
     QWidget(parent),
     ui(new Ui::client)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
+    ui->id->setText(QString("%1").arg(m));
     if(NULL == tem)
         exit(1);
     arp = tem;
