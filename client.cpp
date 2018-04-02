@@ -12,7 +12,7 @@ client::client(QWidget *parent ,winpcap *tem,int m) :
         exit(1);
     arp = tem;
     udpServer = new QUdpSocket(this);                   //实例化udpsocket对象
-    tcpsender = new tcpsocket(this);
+    tcpsender = new tcpsocket(this,1);
 
     if(!udpServer->bind(QHostAddress(arp->getip()),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         qDebug()<<"udp接受端绑定端口出错";

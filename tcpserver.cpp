@@ -11,33 +11,13 @@ void tcpserver::incomingConnection(int socketDescriptor)
 {
     qDebug()<<"有新连接请求";
     //创建一个新的TcpClientSocket与客户端通信
-    tcpsocket *tcpClientSocket=new tcpsocket(this);
+    tcpsocket *tcpClientSocket=new tcpsocket(this,2);           //服务端
 
-    //连接TcpClientSocket的updateClients（）信号
-    connect(tcpClientSocket,SIGNAL(updateClients(QByteArray,tcpsocket *)),
-            this,SLOT(updateClients(QByteArray,tcpsocket *)));
-
-    //连接TcpClientSocket的disconnected（）信号
-    connect(tcpClientSocket,SIGNAL(disconnected(tcpsocket *)),
-            this,SLOT(slotDisconnected(tcpsocket *)));
     //将新创建的TcpClientSocket的套接字描述符指定为参数socketDescriptor
     tcpClientSocket->setSocketDescriptor(socketDescriptor);
-
-    //请求是否同意连接
-    QString tem = QString("有新的连接请求，IP：%1  端口：%2 是否同意连接").arg(tcpClientSocket->peerAddress().toString()).arg(tcpClientSocket->peerPort());
-    if(QMessageBox::No == QMessageBox::question(0,
-                                                 tr("Question"),
-                                                 tem,
-                                                 QMessageBox::Yes | QMessageBox::No,
-                                                QMessageBox::No)){
-        tcpClientSocket->close();
-        return;
-    }
-
-    //将tcpClientSocket加入客户端套接字列表以便管理
-    tcpClientSocketList.append(tcpClientSocket);
-    emit newclientsocket(tcpClientSocket);
-    qDebug()<<tcpClientSocketList;
+    //将验证通过信号和验证通过处理程序关联
+    connect(tcpClientSocket,SIGNAL(verificationpassed(QString,tcpsocket*)),this,SLOT(newverifiedclient(QString,tcpsocket*)));
+    connect(tcpClientSocket,SIGNAL(deletetcpsocket(tcpsocket*)),this,SLOT(releasetcpsocket(tcpsocket*)));           //验证不通过后释放该连接内存
 }
 
 void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
@@ -62,34 +42,65 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
     out.setVersion(QDataStream::Qt_4_6);
     out<<tem3;          //不用数据流也可以，此处使用方便以后拓展
 
-
-
     //将位置信息转发到其他ip
-    for(int i=0;i<tcpClientSocketList.count();i++)
-    {
-        QTcpSocket *item = tcpClientSocketList.at(i);
-        if(item->peerAddress().toString() != ip){
-            item->write(block);
-        }else if(item->peerPort() != port){
-            item->write(block);
+    QHashIterator <QString,tcpsocket *> i(tcpClientSocketList);
+    while(i.hasNext()){
+        i.next();
+        if(i.value()->peerAddress().toString() != ip){
+            i.value()->write(block);
+        }else if(i.value()->peerPort() != port){
+            qDebug()<<"转发";
+            i.value()->write(block);
         }
     }
-
 }
 
 void tcpserver::slotDisconnected(tcpsocket *clientsocket)
 {
     qintptr t = clientsocket->socketDescriptor();
-    for(int i=0;i<tcpClientSocketList.count();i++)
-    {
-        QTcpSocket *item = tcpClientSocketList.at(i);
-        if(item->socketDescriptor()== t)
-        {
-            tcpClientSocketList.removeAt(i);
+    QHashIterator <QString,tcpsocket *> i(tcpClientSocketList);
+    while(i.hasNext()){
+        i.next();
+        if(i.value()->socketDescriptor() == t){
+            tcpClientSocketList.remove(i.key());
             emit disconnected(clientsocket);
-            qDebug()<<"断开连接";
             return;
         }
     }
+
+
+//    for(int i=0;i<tcpClientSocketList.count();i++)
+//    {
+//        QTcpSocket *item = tcpClientSocketList.at(i);
+//        if(item->socketDescriptor()== t)
+//        {
+//            tcpClientSocketList.removeAt(i);
+//            emit disconnected(clientsocket);
+//            qDebug()<<"断开连接";
+//            return;
+//        }
+//    }
     return;
+}
+
+void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
+{
+    //连接TcpClientSocket的updateClients（）信号
+    connect(clientsocket,SIGNAL(updateClients(QByteArray,tcpsocket *)),
+            this,SLOT(updateClients(QByteArray,tcpsocket *)));
+
+    //连接TcpClientSocket的disconnected（）信号
+    connect(clientsocket,SIGNAL(disconnected(tcpsocket *)),
+            this,SLOT(slotDisconnected(tcpsocket *)));
+
+    //将tcpClientSocket加入客户端套接字列表以便管理
+    tcpClientSocketList.insert(id,clientsocket);
+    emit newclientsocket(clientsocket);
+    qDebug()<<tcpClientSocketList;
+
+}
+
+void tcpserver::releasetcpsocket(tcpsocket *clientsocket)
+{
+    delete clientsocket;
 }

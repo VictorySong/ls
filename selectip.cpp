@@ -68,14 +68,17 @@ void selectip::on_pushButton_3_clicked()
 
 void selectip::on_pushButton_2_clicked()
 {
-    bool ok;
-    int text = QInputDialog::getInt(this,QString("请输入卫星编号"),QString("卫星编号:"),0,0,200000,1,&ok);
-    if(ok){
-        cli = new client(0,arp,text);
-        cli->setWindowTitle(QString("小卫星"));
-        cli->show();
-    }
-
+//    bool ok;
+//    int text = QInputDialog::getInt(this,QString("请输入卫星编号"),QString("卫星编号:"),0,0,200000,1,&ok);
+//    if(ok){
+//        cli = new client(0,arp,text);
+//        cli->setWindowTitle(QString("小卫星"));
+//        cli->show();
+//    }
+    int text = 1234;
+    cli = new client(0,arp,text);
+    cli->setWindowTitle(QString("小卫星"));
+    cli->show();
 }
 
 void selectip::updatealivemactable()

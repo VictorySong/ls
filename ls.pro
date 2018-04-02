@@ -45,7 +45,8 @@ SOURCES += \
     client.cpp \
     tcpsocket.cpp \
     tcpserver.cpp \
-    udpbroad.cpp
+    udpbroad.cpp \
+    verification.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -58,14 +59,16 @@ HEADERS += \
     client.h \
     tcpsocket.h \
     tcpserver.h \
-    udpbroad.h
+    udpbroad.h \
+    verification.h
 
 FORMS += \
         mainwindow.ui \
     arpactdev.ui \
     selectip.ui \
     server.ui \
-    client.ui
+    client.ui \
+    verification.ui
 
 OTHER_FILES += \
             Packet.lib\

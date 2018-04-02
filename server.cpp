@@ -92,23 +92,45 @@ void server::on_pushButton_2_clicked()
 
 void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
 {
+    qDebug()<<"有新数据";
     QJsonParseError error;
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
     qDebug()<<error.errorString();
     QVariantMap result = jsondoc.toVariant().toMap();
-
-    int row = ui->tableWidget->rowCount();
-    QString ip = clientsocket->peerAddress().toString();
-    QString port = QString("%1").arg(clientsocket->peerPort());
-    for(int i = 0;i<row;i++){
-        if(ui->tableWidget->item(i,0)->text() == ip
-           && ui->tableWidget->item(i,1)->text() == port){
-            ui->tableWidget->removeCellWidget(i,2);             //先清掉
-            ui->tableWidget->removeCellWidget(i,3);             //先清掉
-            ui->tableWidget->setItem(i,2,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
-            ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
-            break;
+    if(result.contains(QString("x"))){
+        int row = ui->tableWidget->rowCount();
+        QString ip = clientsocket->peerAddress().toString();
+        QString port = QString("%1").arg(clientsocket->peerPort());
+        for(int i = 0;i<row;i++){
+            if(ui->tableWidget->item(i,0)->text() == ip
+               && ui->tableWidget->item(i,1)->text() == port){
+                ui->tableWidget->removeCellWidget(i,2);             //先清掉
+                ui->tableWidget->removeCellWidget(i,3);             //先清掉
+                ui->tableWidget->setItem(i,2,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
+                ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
+                break;
+            }
         }
+        //画图
+
+
+        //更改卫星实时位置
+        QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
+        while(i.hasNext()){
+            i.next();
+            if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
+                    && i.value()->peerPort() == clientsocket->peerPort()){
+                inf tem;
+                tem.x = result["x"].toFloat();
+                tem.y = result["y"].toFloat();
+                locationlist.insert(i.key(),tem);
+                break;
+            }
+        }
+
+    }else{
+        qDebug()<<"收到的信息不是位置信息";
+        qDebug()<<mess;
     }
 }
 
@@ -119,10 +141,24 @@ void server::updatenewclient(tcpsocket * clientsocket)
     ui->tableWidget->setItem(row,0,new QTableWidgetItem(clientsocket->peerAddress().toString()));       //更新新连接ip
     ui->tableWidget->setItem(row,1,new QTableWidgetItem(QString("%1").arg(clientsocket->peerPort())));      //更新新连接端口
 
+    //添加卫星实时位置
+    QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
+    while(i.hasNext()){
+        i.next();
+        if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
+                && i.value()->peerPort() == clientsocket->peerPort()){
+            inf tem;
+            locationlist.insert(i.key(),tem);
+            qDebug()<<tem.x;
+            break;
+        }
+    }
+    qDebug()<<locationlist.keys();
 }
 
 void server::disconnected(tcpsocket *clientsocket)
 {
+    qDebug()<<"lianjieyiduankaifjkfjsdkfl";
     int row = ui->tableWidget->rowCount();
     QString ip = clientsocket->peerAddress().toString();
     QString port = QString("%1").arg(clientsocket->peerPort());
@@ -133,4 +169,5 @@ void server::disconnected(tcpsocket *clientsocket)
             break;
         }
     }
+    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
 }
