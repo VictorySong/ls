@@ -117,10 +117,17 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
             i.next();
             if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
                     && i.value()->peerPort() == clientsocket->peerPort()){
-                inf tem;
+                inf protem;         //前一个位置结构
+                protem = locationlist.value(i.key());
+                inf tem;            //现在的位置结构
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
+
+
+
+
+
                 break;
             }
         }
