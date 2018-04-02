@@ -111,10 +111,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
                 break;
             }
         }
-        //画图
-
-
-        //更改卫星实时位置
+        //画图并更改卫星实时位置
         QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
         while(i.hasNext()){
             i.next();
@@ -169,5 +166,5 @@ void server::disconnected(tcpsocket *clientsocket)
             break;
         }
     }
-    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
+//    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
 }
