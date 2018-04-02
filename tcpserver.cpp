@@ -18,6 +18,7 @@ void tcpserver::incomingConnection(int socketDescriptor)
     //将验证通过信号和验证通过处理程序关联
     connect(tcpClientSocket,SIGNAL(verificationpassed(QString,tcpsocket*)),this,SLOT(newverifiedclient(QString,tcpsocket*)));
     connect(tcpClientSocket,SIGNAL(deletetcpsocket(tcpsocket*)),this,SLOT(releasetcpsocket(tcpsocket*)));           //验证不通过后释放该连接内存
+    connect(tcpClientSocket,SIGNAL(verifyserver(QByteArray,tcpsocket*)),this,SLOT(verifyserver(QByteArray,tcpsocket*)));    //验证程序
 }
 
 void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
@@ -68,18 +69,6 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
         }
     }
 
-
-//    for(int i=0;i<tcpClientSocketList.count();i++)
-//    {
-//        QTcpSocket *item = tcpClientSocketList.at(i);
-//        if(item->socketDescriptor()== t)
-//        {
-//            tcpClientSocketList.removeAt(i);
-//            emit disconnected(clientsocket);
-//            qDebug()<<"断开连接";
-//            return;
-//        }
-//    }
     return;
 }
 
@@ -103,4 +92,65 @@ void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
 void tcpserver::releasetcpsocket(tcpsocket *clientsocket)
 {
     delete clientsocket;
+}
+
+void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
+{
+    //验证客户端   这是在服务器类中， 与tcpsocket类中的verifyidserver 的注释部分相似
+    QJsonParseError error;
+    QJsonDocument jsondoc = QJsonDocument::fromJson(buff,&error);       //转化成json对象
+    QVariantMap result = jsondoc.toVariant().toMap();
+    if(!tcpClientSocketList.contains(result["id"].toString())){
+        if(result["secret"].toString() == QString("123")){
+            disconnect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(verifyidserver()));
+            connect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(dataReceived()));
+            emit clientsocket->verificationpassed(result["id"].toString(),clientsocket);
+
+            //回复同意连接
+            QByteArray datagram = "allow";
+            QByteArray block;
+            //使用数据流写入数据
+            QDataStream out(&block,QIODevice::WriteOnly);
+            //设置数据流的版本，客户端和服务器端使用的版本要相同
+            out.setVersion(QDataStream::Qt_4_6);
+            out<<datagram;
+            if(clientsocket->isWritable())
+                clientsocket->write(block);
+
+            qDebug()<<"同意连接";
+        }else{
+            //请求是否同意连接
+            QString tem = QString("有新的连接请求，IP：%1  端口：%2 卫星id：%3 卫星接入密码：%4 是否同意连接").arg(clientsocket->peerAddress().toString()).arg(clientsocket->peerPort()).arg(result["id"].toString()).arg(result["secret"].toString());
+            if(QMessageBox::No == QMessageBox::question(0,
+                                                         tr("Question"),
+                                                         tem,
+                                                         QMessageBox::Yes | QMessageBox::No,
+                                                        QMessageBox::No)){
+                qDebug()<<clientsocket;
+                clientsocket->abort();
+                emit clientsocket->deletetcpsocket(clientsocket);                     //发送释放这个内存的信号
+                return;
+            }
+            //回复同意连接
+            QByteArray datagram = "allow";
+            QByteArray block;
+            //使用数据流写入数据
+            QDataStream out(&block,QIODevice::WriteOnly);
+            //设置数据流的版本，客户端和服务器端使用的版本要相同
+            out.setVersion(QDataStream::Qt_4_6);
+            out<<datagram;
+            if(clientsocket->isWritable())
+                clientsocket->write(block);
+
+            //验证通过
+            disconnect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(verifyidserver()));
+            connect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(dataReceived()));
+            emit clientsocket->verificationpassed(result["id"].toString(),clientsocket);
+        }
+    }else{
+        //列表中已经有该id的连接
+        clientsocket->abort();
+        emit clientsocket->deletetcpsocket(clientsocket);                     //发送释放这个内存的信号
+        return;
+    }
 }

@@ -2,6 +2,8 @@
 #define TCPSERVER_H
 
 #include <stable.h>
+
+
 class tcpsocket;
 class tcpserver : public QTcpServer
 {
@@ -18,6 +20,7 @@ public slots:
     void slotDisconnected(tcpsocket *);
     void newverifiedclient(QString,tcpsocket *);
     void releasetcpsocket(tcpsocket *);                 //释放那部分没有通过验证的tcp连接
+    void verifyserver(QByteArray,tcpsocket *);                                //验证程序
 protected:
     void incomingConnection(int socketDescriptor);
 };

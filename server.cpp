@@ -7,6 +7,7 @@ server::server(QWidget *parent,winpcap *tem) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
+
     if(NULL == tem)
         exit(1);
     arp = tem;
@@ -117,15 +118,12 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
             i.next();
             if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
                     && i.value()->peerPort() == clientsocket->peerPort()){
-                inf protem;         //前一个位置结构
-                protem = locationlist.value(i.key());
+                inf pretem;         //前一个位置结构
+                pretem = locationlist.value(i.key());
                 inf tem;            //现在的位置结构
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
-
-
-
 
 
                 break;

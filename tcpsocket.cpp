@@ -70,61 +70,69 @@ void tcpsocket::verifyidclient()
 
 void tcpsocket::verifyidserver()
 {
-    //验证客户端
+    qDebug()<<"有新数据";
     QByteArray buff;
     QDataStream in(this);
     in.setVersion(QDataStream::Qt_4_6);
     //设置数据流版本，这里要和服务器端相同
     in>>buff;
-    QJsonParseError error;
-    QJsonDocument jsondoc = QJsonDocument::fromJson(buff,&error);       //转化成json对象
-    QVariantMap result = jsondoc.toVariant().toMap();
-    if(result["secret"].toString() == QString("123")){
-        disconnect(this,SIGNAL(readyRead()),this,SLOT(verifyidserver()));
-        connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
-        emit verificationpassed(result["id"].toString(),this);
+    qDebug()<<buff;
+    emit verifyserver(buff,this);
+//    //验证客户端
+//    QByteArray buff;
+//    QDataStream in(this);
+//    in.setVersion(QDataStream::Qt_4_6);
+//    //设置数据流版本，这里要和服务器端相同
+//    in>>buff;
+//    QJsonParseError error;
+//    QJsonDocument jsondoc = QJsonDocument::fromJson(buff,&error);       //转化成json对象
+//    QVariantMap result = jsondoc.toVariant().toMap();
+//        if(result["secret"].toString() == QString("123")){
+//            disconnect(this,SIGNAL(readyRead()),this,SLOT(verifyidserver()));
+//            connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
+//            emit this->verificationpassed(result["id"].toString(),this);
 
-        //回复同意连接
-        QByteArray datagram = "allow";
-        QByteArray block;
-        //使用数据流写入数据
-        QDataStream out(&block,QIODevice::WriteOnly);
-        //设置数据流的版本，客户端和服务器端使用的版本要相同
-        out.setVersion(QDataStream::Qt_4_6);
-        out<<datagram;
-        if(this->isWritable())
-            this->write(block);
+//            //回复同意连接
+//            QByteArray datagram = "allow";
+//            QByteArray block;
+//            //使用数据流写入数据
+//            QDataStream out(&block,QIODevice::WriteOnly);
+//            //设置数据流的版本，客户端和服务器端使用的版本要相同
+//            out.setVersion(QDataStream::Qt_4_6);
+//            out<<datagram;
+//            if(this->isWritable())
+//                this->write(block);
 
-        qDebug()<<"同意连接";
-    }else{
-        //请求是否同意连接
-        QString tem = QString("有新的连接请求，IP：%1  端口：%2 卫星id：%3 卫星接入密码：%4 是否同意连接").arg(this->peerAddress().toString()).arg(this->peerPort()).arg(result["id"].toString()).arg(result["secret"].toString());
-        if(QMessageBox::No == QMessageBox::question(0,
-                                                     tr("Question"),
-                                                     tem,
-                                                     QMessageBox::Yes | QMessageBox::No,
-                                                    QMessageBox::No)){
-            qDebug()<<this;
-            this->abort();
-            emit deletetcpsocket(this);                     //发送释放这个内存的信号
-            return;
-        }
-        //回复同意连接
-        QByteArray datagram = "allow";
-        QByteArray block;
-        //使用数据流写入数据
-        QDataStream out(&block,QIODevice::WriteOnly);
-        //设置数据流的版本，客户端和服务器端使用的版本要相同
-        out.setVersion(QDataStream::Qt_4_6);
-        out<<datagram;
-        if(this->isWritable())
-            this->write(block);
+//            qDebug()<<"同意连接";
+//        }else{
+//            //请求是否同意连接
+//            QString tem = QString("有新的连接请求，IP：%1  端口：%2 卫星id：%3 卫星接入密码：%4 是否同意连接").arg(this->peerAddress().toString()).arg(this->peerPort()).arg(result["id"].toString()).arg(result["secret"].toString());
+//            if(QMessageBox::No == QMessageBox::question(0,
+//                                                         tr("Question"),
+//                                                         tem,
+//                                                         QMessageBox::Yes | QMessageBox::No,
+//                                                        QMessageBox::No)){
+//                qDebug()<<this;
+//                this->abort();
+//                emit this->deletetcpsocket(this);                     //发送释放这个内存的信号
+//                return;
+//            }
+//            //回复同意连接
+//            QByteArray datagram = "allow";
+//            QByteArray block;
+//            //使用数据流写入数据
+//            QDataStream out(&block,QIODevice::WriteOnly);
+//            //设置数据流的版本，客户端和服务器端使用的版本要相同
+//            out.setVersion(QDataStream::Qt_4_6);
+//            out<<datagram;
+//            if(this->isWritable())
+//                this->write(block);
 
-        //验证通过
-        disconnect(this,SIGNAL(readyRead()),this,SLOT(verifyidserver()));
-        connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
-        emit verificationpassed(result["id"].toString(),this);
-    }
+//            //验证通过
+//            disconnect(this,SIGNAL(readyRead()),this,SLOT(verifyidserver()));
+//            connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
+//            emit this->verificationpassed(result["id"].toString(),this);
+//        }
 }
 
 void tcpsocket::waitverification()

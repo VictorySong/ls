@@ -13,12 +13,14 @@ signals:
     void disconnected(tcpsocket *);
     void verificationpassed(QString,tcpsocket *);                   //告诉服务端，验证通过
     void deletetcpsocket(tcpsocket *);                              //发送释放这部分内存的信号
+    void verifyserver(QByteArray,tcpsocket *);                                 //发送验证信号
 protected slots:
     void dataReceived();
     void slotDisconnected();
     void verifyidclient();                //验证身份 客户端
-    void verifyidserver();                //验证身份 服务端
     void waitverification();              //等待服务器允许接入的响应
+public slots:
+    void verifyidserver();                //验证身份 服务端
 
 
 };

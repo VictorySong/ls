@@ -18,6 +18,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QDialog>
+#include <QPainter>
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12
