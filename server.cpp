@@ -62,6 +62,9 @@ server::server(QWidget *parent,winpcap *tem) :
     connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*)));
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
+
+    pix = QPixmap(300,200);         //设置画布大小
+    pix.fill(Qt::white);
 }
 
 server::~server()
@@ -124,8 +127,12 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
-
-
+                //设置起始点
+                lastpoint.setX(pretem.x);
+                lastpoint.setY(pretem.y);
+                endpoint.setX(tem.x);
+                endpoint.setY(tem.y);
+                this->update();
                 break;
             }
         }
@@ -172,4 +179,12 @@ void server::disconnected(tcpsocket *clientsocket)
         }
     }
 //    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
+}
+
+void server::paintEvent(QPaintEvent *)
+{
+    QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
+    pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
+    QPainter painter(ui->locateopenGLWidget);
+    painter.drawPixmap(0, 0, pix);
 }
