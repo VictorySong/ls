@@ -105,14 +105,9 @@ void client::on_pushButton_3_clicked()
     QJsonDocument document;
     document.setObject(json);
     QByteArray datagram = document.toJson(QJsonDocument::Compact);  //将位置信息转化为json格式
-    QByteArray block;
-    //使用数据流写入数据
-    QDataStream out(&block,QIODevice::WriteOnly);
-    //设置数据流的版本，客户端和服务器端使用的版本要相同
-    out.setVersion(QDataStream::Qt_4_6);
-    out<<datagram;
+
     if(tcpsender->isWritable())
-        tcpsender->write(block);
+        tcpsender->write(datagram);
 }
 
 void client::newdata(QByteArray mess, tcpsocket *clientsocket)

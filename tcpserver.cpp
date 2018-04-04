@@ -96,6 +96,8 @@ void tcpserver::releasetcpsocket(tcpsocket *clientsocket)
 
 void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
 {
+    qDebug()<<buff;
+
     //验证客户端   这是在服务器类中， 与tcpsocket类中的verifyidserver 的注释部分相似
     QJsonParseError error;
     QJsonDocument jsondoc = QJsonDocument::fromJson(buff,&error);       //转化成json对象
@@ -108,14 +110,9 @@ void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
 
             //回复同意连接
             QByteArray datagram = "allow";
-            QByteArray block;
-            //使用数据流写入数据
-            QDataStream out(&block,QIODevice::WriteOnly);
-            //设置数据流的版本，客户端和服务器端使用的版本要相同
-            out.setVersion(QDataStream::Qt_4_6);
-            out<<datagram;
+
             if(clientsocket->isWritable())
-                clientsocket->write(block);
+                clientsocket->write(datagram);
 
             qDebug()<<"同意连接";
         }else{
@@ -133,14 +130,9 @@ void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
             }
             //回复同意连接
             QByteArray datagram = "allow";
-            QByteArray block;
-            //使用数据流写入数据
-            QDataStream out(&block,QIODevice::WriteOnly);
-            //设置数据流的版本，客户端和服务器端使用的版本要相同
-            out.setVersion(QDataStream::Qt_4_6);
-            out<<datagram;
+
             if(clientsocket->isWritable())
-                clientsocket->write(block);
+                clientsocket->write(datagram);
 
             //验证通过
             disconnect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(verifyidserver()));

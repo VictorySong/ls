@@ -33,10 +33,7 @@ tcpsocket::tcpsocket(QObject *parent ,int type):
 void tcpsocket::dataReceived()
 {
     QByteArray buff;
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_4_6);
-    //设置数据流版本，这里要和服务器端相同
-    in>>buff;
+    buff = this->read(this->bytesAvailable());
 
     emit updateClients(buff,this);
 }
@@ -57,14 +54,9 @@ void tcpsocket::verifyidclient()
         QJsonDocument document;
         document.setObject(json);
         QByteArray datagram = document.toJson(QJsonDocument::Compact);  //将位置信息转化为json格式
-        QByteArray block;
-        //使用数据流写入数据
-        QDataStream out(&block,QIODevice::WriteOnly);
-        //设置数据流的版本，客户端和服务器端使用的版本要相同
-        out.setVersion(QDataStream::Qt_4_6);
-        out<<datagram;
+
         if(this->isWritable())
-            this->write(block);
+            this->write(datagram);
     }
 }
 
@@ -72,10 +64,7 @@ void tcpsocket::verifyidserver()
 {
     qDebug()<<"有新数据";
     QByteArray buff;
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_4_6);
-    //设置数据流版本，这里要和服务器端相同
-    in>>buff;
+    buff = this->read(this->bytesAvailable());
     qDebug()<<buff;
     emit verifyserver(buff,this);
 //    //验证客户端
@@ -138,10 +127,7 @@ void tcpsocket::verifyidserver()
 void tcpsocket::waitverification()
 {
     QByteArray buff;
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_4_6);
-    //设置数据流版本，这里要和服务器端相同
-    in>>buff;
+    buff = this->read(this->bytesAvailable());
     if(QString("allow").toLatin1() == buff){
         //验证成功后
         disconnect(this,SIGNAL(readyRead()),this,SLOT(waitverification()));
