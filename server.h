@@ -8,9 +8,15 @@
 #include <tcpsocket.h>
 #include <udpbroad.h>
 
-#include <QGraphicsScene>
-#include <QGraphicsItem>
+#include <QWidget>
+#include <QtGui>
 #include <QGraphicsView>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QSize>
+#include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
 
 namespace Ui {
 class server;
@@ -37,6 +43,7 @@ private:
     tcpserver *tcpServer;              //tcp监听
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
     QHash<QString,inf> locationlist;            //记录卫星最新位置
+
     QPixmap pix;                            //图层
     QPoint lastpoint;                   //起点
     QPoint endpoint;                    //终点

@@ -1,5 +1,6 @@
 #include "server.h"
 #include "ui_server.h"
+#include <QGraphicsView>
 
 server::server(QWidget *parent,winpcap *tem) :
     QWidget(parent),
@@ -63,8 +64,11 @@ server::server(QWidget *parent,winpcap *tem) :
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
 
-    pix = QPixmap(300,200);         //设置画布大小
+    pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
+
+
+
 }
 
 server::~server()
@@ -183,16 +187,16 @@ void server::disconnected(tcpsocket *clientsocket)
 
 void server::paintEvent(QPaintEvent *)
 {
+    pix = pix.scaled(ui->graphicsView->width(),ui->graphicsView->width());
+    //将画布大小实时适应窗口大小
     QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
     pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
-    //QPainter painter(ui->graphicsView);
-    //painter.drawPixmap(0, 0, pix);
 
     QGraphicsScene *scene = new QGraphicsScene;
     QGraphicsView *view = ui->graphicsView;
     scene->addPixmap(pix);
     view->setScene(scene);
+    ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     view->show();
-
 
 }
