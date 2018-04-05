@@ -8,6 +8,10 @@
 #include <tcpsocket.h>
 #include <udpbroad.h>
 
+#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsView>
+
 namespace Ui {
 class server;
 }
@@ -24,6 +28,7 @@ private slots:
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
+
 
 private:
     Ui::server *ui;
