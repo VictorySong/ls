@@ -10,7 +10,9 @@ class tcpserver : public QTcpServer
     Q_OBJECT
 public:
     tcpserver(QObject *parent = 0);
-    QHash<QString,tcpsocket*> tcpClientSocketList;
+    QHash<QString,tcpsocket*> tcpClientSocketList;              //卫星
+    QList<tcpsocket *> tcpphonesocket;                      //手机客户端
+
 signals:
     void updateServer(QByteArray,tcpsocket *);
     void newclientsocket(tcpsocket *);
@@ -21,6 +23,7 @@ public slots:
     void newverifiedclient(QString,tcpsocket *);
     void releasetcpsocket(tcpsocket *);                 //释放那部分没有通过验证的tcp连接
     void verifyserver(QByteArray,tcpsocket *);                                //验证程序
+    void newphone(tcpsocket*);                      //有新的手机加入时
 protected:
     void incomingConnection(int socketDescriptor);
 };
