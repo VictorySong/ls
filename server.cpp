@@ -65,6 +65,7 @@ server::server(QWidget *parent,winpcap *tem) :
 
     pix = QPixmap(300,200);         //设置画布大小
     pix.fill(Qt::white);
+
 }
 
 server::~server()
@@ -188,11 +189,11 @@ void server::paintEvent(QPaintEvent *)
     //QPainter painter(ui->graphicsView);
     //painter.drawPixmap(0, 0, pix);
 
-    QGraphicsScene *scene = new QGraphicsScene;
-    QGraphicsView *view = ui->graphicsView;
-    scene->addPixmap(pix);
-    view->setScene(scene);
-    view->show();
+    //QGraphicsScene *scene = new QGraphicsScene;
+    //QGraphicsView *view = ui->graphicsView;
+    scene.addPixmap(pix);
+    ui->graphicsView->setScene(&scene);
+    //ui->graphicsView->show();
 
 
 }
