@@ -186,14 +186,10 @@ void server::paintEvent(QPaintEvent *)
 {
     QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
     pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
-    //QPainter painter(ui->graphicsView);
-    //painter.drawPixmap(0, 0, pix);
 
-    //QGraphicsScene *scene = new QGraphicsScene;
-    //QGraphicsView *view = ui->graphicsView;
     scene.addPixmap(pix);
     ui->graphicsView->setScene(&scene);
-    //ui->graphicsView->show();
+
 
 
 }
