@@ -65,6 +65,7 @@ server::server(QWidget *parent,winpcap *tem) :
 
     pix = QPixmap(300,200);         //设置画布大小
     pix.fill(Qt::white);
+    scene.addPixmap(pix);
 
 }
 
@@ -184,10 +185,10 @@ void server::disconnected(tcpsocket *clientsocket)
 
 void server::paintEvent(QPaintEvent *)
 {
-    QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
-    pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
+    //QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
+    //pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
 
-    scene.addPixmap(pix);
+    scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
     ui->graphicsView->setScene(&scene);
 
 
