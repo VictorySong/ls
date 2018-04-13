@@ -66,12 +66,8 @@ server::server(QWidget *parent,winpcap *tem) :
 
     pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
-<<<<<<< HEAD
-    scene.addPixmap(pix);
-=======
+    scene.addItem(&group);
 
-
->>>>>>> b5bff9db533dd0c63ae891526433d1f59742a18b
 
 }
 
@@ -191,25 +187,32 @@ void server::disconnected(tcpsocket *clientsocket)
 
 void server::paintEvent(QPaintEvent *)
 {
-<<<<<<< HEAD
-    //QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
-    //pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
+    int static i,lineItemNum;
+    qDebug() << "function paintEvent is triggered" << i++ ;
+    qDebug() << lastpoint.x() << "  " << lastpoint.y() << "  "
+             << endpoint.x() << "  " << endpoint.y() ;
 
-    scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
-    ui->graphicsView->setScene(&scene);
+    //如果lastpoint或endpoint没有数据，则return跳出函数
+    if(lastpoint == QPoint(0,0) && endpoint == QPoint(0,0) )
+    {
+        return;
+    }
 
-=======
-    pix = pix.scaled(ui->graphicsView->width(),ui->graphicsView->width());
-    //将画布大小实时适应窗口大小
-    QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
-    pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
+    //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
+    lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
+    //如果轨迹数量太多，从场景中移除一段轨迹
+    if(lineItemNum>10)
+    {
+        scene.removeItem(lineItemPointer[0]);
+        for(int j=0;j<lineItemNum-1;j++)
+        {
+            lineItemPointer[j] = lineItemPointer[j+1];
+        }
+        lineItemNum--;
+    }
 
-    QGraphicsScene *scene = new QGraphicsScene;
-    QGraphicsView *view = ui->graphicsView;
-    scene->addPixmap(pix);
-    view->setScene(scene);
-    ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view->show();
->>>>>>> b5bff9db533dd0c63ae891526433d1f59742a18b
+    ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中
+
+
 
 }

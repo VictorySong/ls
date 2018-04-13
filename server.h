@@ -49,6 +49,8 @@ private:
     QPoint lastpoint;                   //起点
     QPoint endpoint;                    //终点3
     QGraphicsScene scene;
+    QGraphicsItem *lineItemPointer[12];
+    QGraphicsItemGroup group;
 
 public slots:
     void updatetabelwidget(QByteArray,tcpsocket *);         //更新已有连接界面显示
