@@ -10,9 +10,9 @@ tcpserver::tcpserver(QObject *parent):
 void tcpserver::incomingConnection(int socketDescriptor)
 {
     qDebug()<<"有新连接请求";
+
     //创建一个新的TcpClientSocket与客户端通信
     tcpsocket *tcpClientSocket=new tcpsocket(this,2);           //服务端
-
     //将新创建的TcpClientSocket的套接字描述符指定为参数socketDescriptor
     tcpClientSocket->setSocketDescriptor(socketDescriptor);
     //将验证通过信号和验证通过处理程序关联
