@@ -79,6 +79,7 @@ void winpcap::init()
             }
         }
     }
+    qDebug()<<dev_num;
     //i为0代表上述循环未进入,即没有找到适配器,可能的原因为Winpcap没有安装导致未扫描到
     if (dev_num == 0) {
         qDebug()<<"interface not found,please check winpcap installation";

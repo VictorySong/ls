@@ -63,8 +63,12 @@ server::server(QWidget *parent,winpcap *tem) :
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
 
-    pix = QPixmap(300,200);         //设置画布大小
+    pix = QPixmap(3000,2000);         //设置画布大小
     pix.fill(Qt::white);
+    lastpoint.setX(0);
+    lastpoint.setY(0);
+    endpoint.setX(0);
+    endpoint.setY(0);
 }
 
 server::~server()
@@ -138,12 +142,15 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
-                //设置起始点
-                lastpoint.setX(pretem.x);
-                lastpoint.setY(pretem.y);
-                endpoint.setX(tem.x);
-                endpoint.setY(tem.y);
-                this->update();
+
+                if(pretem.x != -1){
+                    //设置起始点
+                    lastpoint.setX(pretem.x);
+                    lastpoint.setY(pretem.y);
+                    endpoint.setX(tem.x);
+                    endpoint.setY(tem.y);
+                    this->update();
+                }
                 break;
             }
         }
@@ -168,6 +175,8 @@ void server::updatenewclient(tcpsocket * clientsocket)
         if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
                 && i.value()->peerPort() == clientsocket->peerPort()){
             inf tem;
+            tem.x = -1;
+            tem.y = -1;
             locationlist.insert(i.key(),tem);
             qDebug()<<tem.x;
             break;
