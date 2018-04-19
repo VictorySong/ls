@@ -153,12 +153,11 @@ void client::newdata(QByteArray mess, tcpsocket *clientsocket)
 void client::on_pushButton_4_clicked()
 {
     //生成随机位置
-
-    float x = qrand()%200;
-    float y = qrand()%200;
-    ui->x->setText(QString("%1").arg(x));
-    ui->y->setText(QString("%1").arg(y));
-    emit ui->pushButton_3->clicked();
+        float x = qrand()%200;
+        float y = qrand()%200;
+        ui->x->setText(QString("%1").arg(x));
+        ui->y->setText(QString("%1").arg(y));
+        emit ui->pushButton_3->clicked();
 }
 
 void client::tcpdisconnect()
