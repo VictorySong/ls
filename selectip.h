@@ -18,7 +18,6 @@ public:
     ~selectip();
     QMap<QString,QString> usableip;                 //存储ip broadcast
 private slots:
-    void on_pushButton_clicked();
 
     void on_ipcomboBox_currentIndexChanged(const QString &arg1);
 
