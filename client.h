@@ -16,12 +16,11 @@ class client : public QWidget
     Q_OBJECT
 
 public:
-    explicit client(QWidget *parent = 0,winpcap * tem = NULL,int m = 0);
+    explicit client(QWidget *parent = 0,int m = 0);
     ~client();
 
 private:
     Ui::client *ui;
-    winpcap *arp;
     QUdpSocket *udpServer;              //udp监听
     tcpsocket *tcpsender;              //tcp发送
 public slots:

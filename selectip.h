@@ -2,7 +2,6 @@
 #define SELECTIP_H
 
 #include <QWidget>
-#include <winpcap.h>
 #include <server.h>
 #include <client.h>
 
@@ -15,9 +14,9 @@ class selectip : public QWidget
     Q_OBJECT
 
 public:
-    explicit selectip(QWidget *parent = 0,winpcap *tem = NULL);
+    explicit selectip(QWidget *parent = 0);
     ~selectip();
-
+    QMap<QString,QString> usableip;                 //存储ip broadcast
 private slots:
     void on_pushButton_clicked();
 
@@ -29,15 +28,12 @@ private slots:
 
 private:
     Ui::selectip *ui;
-    winpcap *arp;
     server *ser;                            //服务端窗口
-    client *cli;                            //客户端窗口
+    QList<client *>cli;                            //客户端窗口
     void updateipcombox();                          //更新ipcombox
 public slots:
-    void updatealivemactable();             //更新显示活动mac地址的窗口
     void newser(QObject*);                  //服务器窗口摧毁后执行
-    void setmaxprogressbar(unsigned long);          //设置进度条总长
-    void setprogressbar(unsigned long);             //设置进度条现长度
+
 };
 
 #endif // SELECTIP_H

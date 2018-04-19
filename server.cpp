@@ -1,38 +1,28 @@
 #include "server.h"
 #include "ui_server.h"
 
-server::server(QWidget *parent,winpcap *tem) :
+extern QString ip;                 //ip
+extern QString broadcast;                  //广播地址
+
+server::server(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::server)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
 
-    if(NULL == tem)
-        exit(1);
-    arp = tem;
     udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
     tcpServer = new tcpserver(this);                   //实例化tcpserver对象
-    udpsender->bind(QHostAddress(arp->getip()),0);
+    udpsender->bind(QHostAddress(ip),0);
 
-    //获取局域网广播地址
-    char ip[16];
-    char netmask[16];
-    arp->getip(ip);
-    arp->getnetmask(netmask);
-    unsigned long myip = inet_addr(ip);
-    unsigned long mynetmask = inet_addr(netmask);
-    unsigned long toip = htonl((myip & mynetmask));
-    unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
-    toip += num;
-    toip = htonl(toip);
-    ui->multicastip->setText(arp->iptos(toip));         //设置udp广播地址
+
+    ui->multicastip->setText(broadcast);         //设置udp广播地址
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
     //获取监听的端口和ip
     QJsonObject json;
-    json.insert("ip",arp->getip());
+    json.insert("ip",ip);
     json.insert("port",ui->tcpport->text().toInt());
     QJsonDocument document;
     document.setObject(json);
@@ -44,7 +34,7 @@ server::server(QWidget *parent,winpcap *tem) :
 
     //监听tcp
     if(!this->tcpServer->isListening()){
-        if(!this->tcpServer->listen(QHostAddress(arp->getip()),ui->tcpport->text().toInt()))
+        if(!this->tcpServer->listen(QHostAddress(ip),ui->tcpport->text().toInt()))
         {
             qDebug() << this->tcpServer->errorString();
         }else{

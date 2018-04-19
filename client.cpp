@@ -1,34 +1,25 @@
 #include "client.h"
 #include "ui_client.h"
 
-client::client(QWidget *parent ,winpcap *tem,int m) :
+extern QString ip;                 //ip
+extern QString broadcast;                  //广播地址
+
+client::client(QWidget *parent ,int m) :
     QWidget(parent),
     ui(new Ui::client)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
     ui->id->setText(QString("%1").arg(m));
-    if(NULL == tem)
-        exit(1);
-    arp = tem;
+
     udpServer = new QUdpSocket(this);                   //实例化udpsocket对象
     tcpsender = new tcpsocket(this,1);
 
-    if(!udpServer->bind(QHostAddress(arp->getip()),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+    if(!udpServer->bind(QHostAddress(ip),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         qDebug()<<"udp接受端绑定端口出错";
 
     //获取局域网广播地址
-    char ip[16];
-    char netmask[16];
-    arp->getip(ip);
-    arp->getnetmask(netmask);
-    unsigned long myip = inet_addr(ip);
-    unsigned long mynetmask = inet_addr(netmask);
-    unsigned long toip = htonl((myip & mynetmask));
-    unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
-    toip += num;
-    toip = htonl(toip);
-    ui->multicastip->setText(arp->iptos(toip));
+    ui->multicastip->setText(broadcast);
 
     //采用多播模式会有客户端接收不到的情况
     udpServer->joinMulticastGroup(QHostAddress(ui->multicastip->text()));

@@ -1,18 +1,17 @@
 #include <stable.h>
 #include "mainwindow.h"
 
-//#include "arpactdev.h"
-#include "winpcap.h"
+
 #include "selectip.h"
 #include "server.h"
+QString ip;                 //ip
+QString broadcast;                  //广播地址
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    winpcap *winpcap_t = new winpcap();
-    winpcap_t->init();
-    selectip se(0,winpcap_t);
+    selectip se(0);
     se.setWindowTitle(QString("选择要用的ip地址"));
     se.show();
 

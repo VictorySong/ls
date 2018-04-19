@@ -1,64 +1,79 @@
 #include "selectip.h"
 #include "ui_selectip.h"
 
-selectip::selectip(QWidget *parent,winpcap *tem) :
+extern QString ip;                 //ip
+extern QString broadcast;                  //广播地址
+selectip::selectip(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::selectip)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
-    ui->progressBar->hide();                //进度条隐藏
 
-    if(tem == NULL)
-        exit(1);
-    arp = tem;
     ser = NULL;
-    cli = NULL;
     updateipcombox();       //获得可用ip地址
-    //关联活动mac监听进程结束信号，更新活动mac列表
-    connect(arp,SIGNAL(updatealivemac()),this,SLOT(updatealivemactable()));
-    connect(arp,SIGNAL(setmaxprogressbar(ulong)),this,SLOT(setmaxprogressbar(ulong)));
-    connect(arp,SIGNAL(setprogressbar(ulong)),this,SLOT(setprogressbar(ulong)));
+
 }
 
 selectip::~selectip()
 {
-    delete ui;
-    delete arp;
+    ser->close();
+    delete ser;
+    for(int i = 0;i<cli.count();i++){
+        delete cli.at(i);
+    }
     exit(1);
 }
 
 void selectip::updateipcombox()
 {
-    QList<QString> tem = arp->getusableip();
-    if(tem.length() == 0){
+    //获取所有网络接口的列表
+    QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
+    foreach(QNetworkInterface interface,list) //遍历每一个网络接口
+    {
+        qDebug() << "Device: "<<interface.name(); //设备名
+        //硬件地址
+        qDebug() << "HardwareAddress: "<<interface.hardwareAddress();
+
+        //获取IP地址条目列表，每个条目中包含一个IP地址，
+        //一个子网掩码和一个广播地址
+       QList<QNetworkAddressEntry> entryList= interface.addressEntries();
+        foreach(QNetworkAddressEntry entry,entryList)//遍历每个IP地址条目
+        {
+            qDebug()<<"IP Address: "<<entry.ip().toString(); //IP地址
+            qDebug()<<"Netmask: "<<entry.netmask().toString(); //子网掩码
+            qDebug()<<"Broadcast: "<<entry.broadcast().toString();//广播地址
+            if(entry.broadcast().toString() != QString("")){
+                usableip.insert(entry.ip().toString(),entry.broadcast().toString());
+            }
+        }
+    }
+    if(0 == usableip.count()){
         QMessageBox::information(this,QString("提示："),QString("无可用ip，程序即将退出！"));
         exit(1);
+    }
+
+    QList<QString> tem ;
+    QMapIterator<QString,QString> i(usableip);
+    while(i.hasNext()){
+        i.next();
+        tem.append(i.key());
     }
     ui->ipcomboBox->insertItems(0,tem);
 }
 
 
-void selectip::on_pushButton_clicked()
-{
-    arp->getactmac();
-}
 
 void selectip::on_ipcomboBox_currentIndexChanged(const QString &arg1)
 {
-    ui->dev_tip->setText(QString("网络检测中"));
-    qDebug()<<"ip changged";
-    arp->newhandle(arg1);
-
-    qDebug()<<arp->getselfmac().length();
-    QString mac = QString("子网掩码：%1\nmac地址：%2").arg(arp->getnetmask()).arg(arp->macos());
-    ui->dev_tip->setText(mac);
+    ip = arg1;
+    broadcast = usableip.value(ip);
 }
 
 void selectip::on_pushButton_3_clicked()
 {
     if(NULL == ser){
-        ser = new server(0,arp);
+        ser = new server(0);
         ser->setWindowTitle(QString("中控"));
         connect(ser,SIGNAL(destroyed(QObject*)),this,SLOT(newser(QObject*)));  //服务器窗口摧毁后进行
     }
@@ -68,32 +83,10 @@ void selectip::on_pushButton_3_clicked()
 
 void selectip::on_pushButton_2_clicked()
 {
-//    bool ok;
-//    int text = QInputDialog::getInt(this,QString("请输入卫星编号"),QString("卫星编号:"),0,0,200000,1,&ok);
-//    if(ok){
-//        cli = new client(0,arp,text);
-//        cli->setWindowTitle(QString("小卫星"));
-//        cli->show();
-//    }
-    int text = 1234;
-    cli = new client(0,arp,text);
-    cli->setWindowTitle(QString("小卫星"));
-    cli->show();
-}
-
-void selectip::updatealivemactable()
-{
-    ui->tableWidget->clear();
-    ui->tableWidget->setRowCount(0);
-    QMapIterator<QString,actdevinf> i(arp->actmac);
-    int row = ui->tableWidget->rowCount();
-    while(i.hasNext()){
-        i.next();
-        ui->tableWidget->setRowCount(row+1);
-        ui->tableWidget->setItem(row,0,new QTableWidgetItem(i.key()));
-        ui->tableWidget->setItem(row,1,new QTableWidgetItem(i.value().mac));
-        row++;
-    }
+    client *tem = new client(0,1234);
+    cli.append(tem);
+    tem->setWindowTitle(QString("小卫星"));
+    tem->show();
 }
 
 void selectip::newser(QObject *)
@@ -101,15 +94,3 @@ void selectip::newser(QObject *)
     ser = NULL;
 }
 
-void selectip::setmaxprogressbar(unsigned long t)
-{
-    ui->progressBar->show();
-    ui->progressBar->setMaximum((int)t);
-}
-
-void selectip::setprogressbar(unsigned long t)
-{
-    ui->progressBar->setValue((int)t);
-    if(ui->progressBar->maximum() == (int)t)
-        ui->progressBar->hide();
-}

@@ -38,10 +38,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    winpcap.cpp \
     selectip.cpp \
-    sendarp.cpp \
-    getarp.cpp \
     server.cpp \
     client.cpp \
     tcpsocket.cpp \
@@ -52,10 +49,7 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     stable.h \
-    winpcap.h \
     selectip.h \
-    sendarp.h \
-    getarp.h \
     server.h \
     client.h \
     tcpsocket.h \
