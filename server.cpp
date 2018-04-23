@@ -1,28 +1,39 @@
 #include "server.h"
 #include "ui_server.h"
+#include <QGraphicsView>
 
-extern QString ip;                 //ip
-extern QString broadcast;                  //广播地址
-
-server::server(QWidget *parent) :
+server::server(QWidget *parent,winpcap *tem) :
     QWidget(parent),
     ui(new Ui::server)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
 
+    if(NULL == tem)
+        exit(1);
+    arp = tem;
     udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
     tcpServer = new tcpserver(this);                   //实例化tcpserver对象
-    udpsender->bind(QHostAddress(ip),0);
+    udpsender->bind(QHostAddress(arp->getip()),0);
 
-
-    ui->multicastip->setText(broadcast);         //设置udp广播地址
+    //获取局域网广播地址
+    char ip[16];
+    char netmask[16];
+    arp->getip(ip);
+    arp->getnetmask(netmask);
+    unsigned long myip = inet_addr(ip);
+    unsigned long mynetmask = inet_addr(netmask);
+    unsigned long toip = htonl((myip & mynetmask));
+    unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
+    toip += num;
+    toip = htonl(toip);
+    ui->multicastip->setText(arp->iptos(toip));         //设置udp广播地址
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
     //获取监听的端口和ip
     QJsonObject json;
-    json.insert("ip",ip);
+    json.insert("ip",arp->getip());
     json.insert("port",ui->tcpport->text().toInt());
     QJsonDocument document;
     document.setObject(json);
@@ -34,7 +45,7 @@ server::server(QWidget *parent) :
 
     //监听tcp
     if(!this->tcpServer->isListening()){
-        if(!this->tcpServer->listen(QHostAddress(ip),ui->tcpport->text().toInt()))
+        if(!this->tcpServer->listen(QHostAddress(arp->getip()),ui->tcpport->text().toInt()))
         {
             qDebug() << this->tcpServer->errorString();
         }else{
@@ -53,16 +64,16 @@ server::server(QWidget *parent) :
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
 
-    pix = QPixmap(3000,2000);         //设置画布大小
+    pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
-    lastpoint.setX(0);
-    lastpoint.setY(0);
-    endpoint.setX(0);
-    endpoint.setY(0);
+    scene.addItem(&group);
+
+
 }
 
 server::~server()
 {
+    delete ui;
     delete udpsender;
     delete tcpServer;
     udpbro->terminate();
@@ -72,23 +83,12 @@ server::~server()
 
 void server::on_pushButton_clicked()
 {
-    //获取所有网络接口的列表
-    QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
-    foreach(QNetworkInterface interface,list) //遍历每一个网络接口
-    {
-        qDebug() << "Device: "<<interface.name(); //设备名
-    //硬件地址
-    qDebug() << "HardwareAddress: "<<interface.hardwareAddress();
+    if(QMessageBox::Yes == QMessageBox::question(this,
+                                                 tr("Question"),
+                                                 tr("Are you OK?"),
+                                                 QMessageBox::Yes | QMessageBox::No,
+                                                 QMessageBox::Yes)){
 
-    //获取IP地址条目列表，每个条目中包含一个IP地址，
-    //一个子网掩码和一个广播地址
-       QList<QNetworkAddressEntry> entryList= interface.addressEntries();
-        foreach(QNetworkAddressEntry entry,entryList)//遍历每个IP地址条目
-        {
-           qDebug()<<"IP Address: "<<entry.ip().toString(); //IP地址
-           qDebug()<<"Netmask: "<<entry.netmask().toString(); //子网掩码
-         qDebug()<<"Broadcast: "<<entry.broadcast().toString();//广播地址
-        }
     }
 
 }
@@ -131,15 +131,12 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
-
-                if(pretem.x != -1){
-                    //设置起始点
-                    lastpoint.setX(pretem.x);
-                    lastpoint.setY(pretem.y);
-                    endpoint.setX(tem.x);
-                    endpoint.setY(tem.y);
-                    this->update();
-                }
+                //设置起始点
+                lastpoint.setX(pretem.x);
+                lastpoint.setY(pretem.y);
+                endpoint.setX(tem.x);
+                endpoint.setY(tem.y);
+                this->update();
                 break;
             }
         }
@@ -164,8 +161,6 @@ void server::updatenewclient(tcpsocket * clientsocket)
         if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
                 && i.value()->peerPort() == clientsocket->peerPort()){
             inf tem;
-            tem.x = -1;
-            tem.y = -1;
             locationlist.insert(i.key(),tem);
             qDebug()<<tem.x;
             break;
@@ -192,8 +187,32 @@ void server::disconnected(tcpsocket *clientsocket)
 
 void server::paintEvent(QPaintEvent *)
 {
-    QPainter pp(&pix);    // 根据鼠标指针前后两个位置就行绘制直线
-    pp.drawLine(lastpoint,endpoint);    // 让前一个坐标值等于后一个坐标值，这样就能实现画出连续的线
-    QPainter painter(ui->locateopenGLWidget);
-    painter.drawPixmap(0, 0, pix);
+    int static i,lineItemNum;
+    qDebug() << "function paintEvent is triggered" << i++ ;
+    qDebug() << lastpoint.x() << "  " << lastpoint.y() << "  "
+             << endpoint.x() << "  " << endpoint.y() ;
+
+    //如果lastpoint或endpoint没有数据，则return跳出函数
+    if(lastpoint == QPoint(0,0) && endpoint == QPoint(0,0) )
+    {
+        return;
+    }
+
+    //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
+    lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
+    //如果轨迹数量太多，从场景中移除一段轨迹
+    if(lineItemNum>10)
+    {
+        scene.removeItem(lineItemPointer[0]);
+        for(int j=0;j<lineItemNum-1;j++)
+        {
+            lineItemPointer[j] = lineItemPointer[j+1];
+        }
+        lineItemNum--;
+    }
+
+    ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中
+
+
+
 }
