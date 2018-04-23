@@ -32,7 +32,6 @@ client::client(QWidget *parent ,int m) :
 client::~client()
 {
     qDebug()<<"调用客户端析构函数";
-    delete ui;
     delete udpServer;
     delete tcpsender;
 }
@@ -97,6 +96,8 @@ void client::on_pushButton_3_clicked()
     document.setObject(json);
     QByteArray datagram = document.toJson(QJsonDocument::Compact);  //将位置信息转化为json格式
 
+    qDebug()<<datagram;
+
     if(tcpsender->isWritable())
         tcpsender->write(datagram);
 }
@@ -140,11 +141,13 @@ void client::on_pushButton_4_clicked()
 {
     //生成随机位置
 
-    float x = qrand();
-    float y = qrand();
+    float x = qrand()%200;
+    float y = qrand()%200;
     ui->x->setText(QString("%1").arg(x));
     ui->y->setText(QString("%1").arg(y));
     emit ui->pushButton_3->clicked();
+
+
 }
 
 void client::tcpdisconnect()

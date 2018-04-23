@@ -63,7 +63,6 @@ server::server(QWidget *parent) :
 
 server::~server()
 {
-    delete ui;
     delete udpsender;
     delete tcpServer;
     udpbro->terminate();

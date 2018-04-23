@@ -108,6 +108,10 @@ SOURCE=.\cJSON.h
 
 SOURCE=.\StdAfx.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\wlan.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 

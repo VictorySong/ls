@@ -7,7 +7,8 @@
 #include <windows.h>
 #include "cJSON.h"
 #include "math.h"
-
+#include "wlan.h"
+#pragma comment(lib,"wlan.lib")
 #pragma comment(lib,"ws2_32.lib")
 
 static char *id = "123";
@@ -26,6 +27,7 @@ struct position{
 
 DWORD WINAPI ThreadProc(LPVOID lpParameter)
 {
+	//send location function
 	cJSON *root ,*x,*y;
 	root = cJSON_CreateObject();
 	x = cJSON_CreateNumber(posi.x);
@@ -51,11 +53,45 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	}
 	return 0;
 }
+void init();
 
 int main(int argc, char* argv[])
 {
-	g_hmutex = CreateMutex(NULL,FALSE,NULL);
+	char *tar = "MI";
+	char *tarkey = "123456qaz";
+	changetarget(tar,tarkey);
+	if(in()){
+		printf("connect success\n");
+	}else{
+		printf("searching MI ...\n");
+		for(;;){
+			
+			if(searchwlan()){
+				printf("MI is searched\n");
+				if (!isconnected()) {
+					connectwlan();
+				}else{
+					printf("connect success\n");
+					break;
+				}
+				Sleep(500);
+			}else{
+				setwlanInterfacesoff();
+				setwlanInterfaceson();
+				printf("MI can not be searched\n");
+				Sleep(500);
+			}
+		}
+	}
+			
+	
+	//init();
+    return 0;
+}
 
+void init(){
+	//initialization
+	g_hmutex = CreateMutex(NULL,FALSE,NULL);
     SOCKET s;
 	struct sockaddr_in local,si_other;
 	int slen,recv_len;
@@ -150,6 +186,4 @@ int main(int argc, char* argv[])
 	WSACleanup();
 	cJSON_Delete(root);
 	cJSON_Delete(checmess);
-
-    return 0;
 }

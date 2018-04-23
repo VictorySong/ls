@@ -32,6 +32,7 @@ private:
     void updateipcombox();                          //更新ipcombox
 public slots:
     void newser(QObject*);                  //服务器窗口摧毁后执行
+    void destoryclient(QObject *);           //客户端窗口摧毁后执行
 
 };
 

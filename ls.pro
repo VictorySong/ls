@@ -14,7 +14,8 @@ INCLUDEPATH += WpdPack\Include
 LIBS += -L../ls/  \
         -lPacket  \
         -lwpcap  \
-        -lWS2_32
+        -lWS2_32  \
+        -lwlan
 #-------------------------------------------------
 #编译预处理文件 可以增加编译速度
 PRECOMPILED_HEADER = stable.h
@@ -55,7 +56,8 @@ HEADERS += \
     tcpsocket.h \
     tcpserver.h \
     udpbroad.h \
-    verification.h
+    verification.h \
+    wlan.h
 
 FORMS += \
         mainwindow.ui \

@@ -17,12 +17,14 @@ selectip::selectip(QWidget *parent) :
 
 selectip::~selectip()
 {
-    ser->close();
-    delete ser;
+    if(ser)
+        ser->close();
+
     for(int i = 0;i<cli.count();i++){
-        delete cli.at(i);
+        if(cli.at(i))
+            cli.at(i)->close();
     }
-    exit(1);
+    exit(0);
 }
 
 void selectip::updateipcombox()
@@ -86,11 +88,21 @@ void selectip::on_pushButton_2_clicked()
     client *tem = new client(0,1234);
     cli.append(tem);
     tem->setWindowTitle(QString("小卫星"));
+    connect(tem,SIGNAL(destroyed(QObject*)),this,SLOT(destoryclient(QObject*)));  //服务器窗口摧毁后进行
     tem->show();
 }
 
 void selectip::newser(QObject *)
 {
     ser = NULL;
+}
+
+void selectip::destoryclient(QObject *tem)
+{
+    for(int i = 0;i<cli.count();i++){
+        if(cli.at(i) == tem){
+            cli.replace(i,NULL);
+        }
+    }
 }
 
