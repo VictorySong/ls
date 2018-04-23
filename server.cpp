@@ -2,38 +2,27 @@
 #include "ui_server.h"
 #include <QGraphicsView>
 
-server::server(QWidget *parent,winpcap *tem) :
+extern QString ip;                 //ip
+extern QString broadcast;                  //广播地址
+
+server::server(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::server)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
 
-    if(NULL == tem)
-        exit(1);
-    arp = tem;
+
     udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
     tcpServer = new tcpserver(this);                   //实例化tcpserver对象
-    udpsender->bind(QHostAddress(arp->getip()),0);
-
-    //获取局域网广播地址
-    char ip[16];
-    char netmask[16];
-    arp->getip(ip);
-    arp->getnetmask(netmask);
-    unsigned long myip = inet_addr(ip);
-    unsigned long mynetmask = inet_addr(netmask);
-    unsigned long toip = htonl((myip & mynetmask));
-    unsigned long num = htonl(inet_addr("255.255.255.255")-mynetmask);
-    toip += num;
-    toip = htonl(toip);
-    ui->multicastip->setText(arp->iptos(toip));         //设置udp广播地址
+    udpsender->bind(QHostAddress(ip),0);
+    ui->multicastip->setText(broadcast);         //设置udp广播地址
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
     //获取监听的端口和ip
     QJsonObject json;
-    json.insert("ip",arp->getip());
+    json.insert("ip",ip);
     json.insert("port",ui->tcpport->text().toInt());
     QJsonDocument document;
     document.setObject(json);
@@ -45,7 +34,7 @@ server::server(QWidget *parent,winpcap *tem) :
 
     //监听tcp
     if(!this->tcpServer->isListening()){
-        if(!this->tcpServer->listen(QHostAddress(arp->getip()),ui->tcpport->text().toInt()))
+        if(!this->tcpServer->listen(QHostAddress(ip),ui->tcpport->text().toInt()))
         {
             qDebug() << this->tcpServer->errorString();
         }else{
@@ -67,13 +56,15 @@ server::server(QWidget *parent,winpcap *tem) :
     pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
     scene.addItem(&group);
-
+    lastpoint.setX(0);
+    lastpoint.setY(0);
+    endpoint.setX(0);
+    endpoint.setY(0);
 
 }
 
 server::~server()
 {
-    delete ui;
     delete udpsender;
     delete tcpServer;
     udpbro->terminate();
@@ -83,13 +74,6 @@ server::~server()
 
 void server::on_pushButton_clicked()
 {
-    if(QMessageBox::Yes == QMessageBox::question(this,
-                                                 tr("Question"),
-                                                 tr("Are you OK?"),
-                                                 QMessageBox::Yes | QMessageBox::No,
-                                                 QMessageBox::Yes)){
-
-    }
 
 }
 
@@ -132,11 +116,15 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
                 //设置起始点
-                lastpoint.setX(pretem.x);
-                lastpoint.setY(pretem.y);
-                endpoint.setX(tem.x);
-                endpoint.setY(tem.y);
-                this->update();
+                if(pretem.x != -1){
+                    //设置起始点
+                    lastpoint.setX(pretem.x);
+                    lastpoint.setY(pretem.y);
+                    endpoint.setX(tem.x);
+                    endpoint.setY(tem.y);
+                    this->update();
+                }
+
                 break;
             }
         }
@@ -161,6 +149,8 @@ void server::updatenewclient(tcpsocket * clientsocket)
         if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
                 && i.value()->peerPort() == clientsocket->peerPort()){
             inf tem;
+            tem.x = -1;
+            tem.y = -1;
             locationlist.insert(i.key(),tem);
             qDebug()<<tem.x;
             break;

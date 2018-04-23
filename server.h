@@ -3,12 +3,10 @@
 
 #include <stable.h>
 #include <QWidget>
-#include <winpcap.h>
 #include <tcpserver.h>
 #include <tcpsocket.h>
 #include <udpbroad.h>
 
-#include <QWidget>
 #include <QtGui>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
@@ -27,7 +25,7 @@ class server : public QWidget
     Q_OBJECT
 
 public:
-    explicit server(QWidget *parent = 0,winpcap *tem = NULL);
+    explicit server(QWidget *parent = 0);
     ~server();
 
 private slots:
@@ -38,7 +36,6 @@ private slots:
 
 private:
     Ui::server *ui;
-    winpcap *arp;
     QUdpSocket *udpsender;              //udp发送
     tcpserver *tcpServer;              //tcp监听
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
