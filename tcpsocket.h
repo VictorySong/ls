@@ -14,6 +14,7 @@ signals:
     void verificationpassed(QString,tcpsocket *);                   //告诉服务端，验证通过
     void deletetcpsocket(tcpsocket *);                              //发送释放这部分内存的信号
     void verifyserver(QByteArray,tcpsocket *);                                 //发送验证信号
+    void sendid(QString);                                               //更新卫星窗口的id
 protected slots:
     void dataReceived();
     void slotDisconnected();

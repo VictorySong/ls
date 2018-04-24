@@ -23,7 +23,6 @@ void tcpserver::incomingConnection(int socketDescriptor)
 
 void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
 {
-    emit updateServer(mes,clientsocket);
     //添加信息内容，标明来源
     QString ip = clientsocket->peerAddress().toString();
     quint16 port = clientsocket->peerPort();
@@ -35,6 +34,17 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
     QJsonDocument tem2;
     tem2.setObject(tem);
     QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
+
+    //插入卫星id
+    QHashIterator <QString,tcpsocket *> h(tcpClientSocketList);
+    while(h.hasNext()){
+        h.next();
+        if(h.value()->peerAddress().toString() == ip && h.value()->peerPort() == port){
+            tem.insert(QString("id"),h.key());
+            emit updateServer(mes,clientsocket,h.key());
+            break;
+        }
+    }
 
     //将位置信息转发到其他ip
     QHashIterator <QString,tcpsocket *> i(tcpClientSocketList);
@@ -99,7 +109,7 @@ void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
 
     //将tcpClientSocket加入客户端套接字列表以便管理
     tcpClientSocketList.insert(id,clientsocket);
-    emit newclientsocket(clientsocket);
+    emit newclientsocket(id,clientsocket);
     qDebug()<<tcpClientSocketList;
 
 }

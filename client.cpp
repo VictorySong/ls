@@ -4,13 +4,12 @@
 extern QString ip;                 //ip
 extern QString broadcast;                  //广播地址
 
-client::client(QWidget *parent ,int m) :
+client::client(QWidget *parent ) :
     QWidget(parent),
     ui(new Ui::client)
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
-    ui->id->setText(QString("%1").arg(m));
 
     socketinit();
 }
@@ -166,4 +165,11 @@ void client::socketinit()
     connect(tcpsender,SIGNAL(connected()),this,SLOT(tcpconnected()));
     connect(tcpsender,SIGNAL(updateClients(QByteArray,tcpsocket*)),this,SLOT(newdata(QByteArray,tcpsocket*)));  //接收数据
     connect(tcpsender,SIGNAL(disconnected()),this,SLOT(tcpdisconnect()));                  //连接断开后
+    connect(tcpsender,SIGNAL(sendid(QString)),this,SLOT(getid(QString)));                       //更新id
+}
+
+void client::getid(QString id)
+{
+    this->setWindowTitle(id);
+    ui->id->setText(id);
 }

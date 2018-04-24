@@ -16,7 +16,7 @@ class client : public QWidget
     Q_OBJECT
 
 public:
-    explicit client(QWidget *parent = 0,int m = 0);
+    explicit client(QWidget *parent = 0);
     ~client();
     void wificonnected();                       //wifi连接
 
@@ -37,6 +37,7 @@ private slots:
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
+    void getid(QString);                    //更新窗口id
 };
 
 #endif // CLIENT_H

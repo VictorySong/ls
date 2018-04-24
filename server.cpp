@@ -43,7 +43,7 @@ void server::on_pushButton_2_clicked()
 
 }
 
-void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
+void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString id)
 {
     qDebug()<<"有新数据";
     QJsonParseError error;
@@ -51,16 +51,21 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
     qDebug()<<error.errorString();
     QVariantMap result = jsondoc.toVariant().toMap();
     if(result.contains(QString("x"))){
-        int row = ui->tableWidget->rowCount();
         QString ip = clientsocket->peerAddress().toString();
         QString port = QString("%1").arg(clientsocket->peerPort());
+
+        int row = ui->tableWidget->rowCount();
+
         for(int i = 0;i<row;i++){
-            if(ui->tableWidget->item(i,0)->text() == ip
-               && ui->tableWidget->item(i,1)->text() == port){
+            if(ui->tableWidget->item(i,0)->text() == id ){
+                ui->tableWidget->removeCellWidget(i,1);             //先清掉
                 ui->tableWidget->removeCellWidget(i,2);             //先清掉
                 ui->tableWidget->removeCellWidget(i,3);             //先清掉
-                ui->tableWidget->setItem(i,2,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
+                ui->tableWidget->removeCellWidget(i,4);             //先清掉
+                ui->tableWidget->setItem(i,3,new QTableWidgetItem(ip));     //更新ip地址
+                ui->tableWidget->setItem(i,3,new QTableWidgetItem(port));         //更新端口
+                ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
+                ui->tableWidget->setItem(i,4,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
                 break;
             }
         }
@@ -96,12 +101,13 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket)
     }
 }
 
-void server::updatenewclient(tcpsocket * clientsocket)
+void server::updatenewclient(QString id,tcpsocket * clientsocket)
 {
     int row = ui->tableWidget->rowCount();
     ui->tableWidget->setRowCount(row+1);
-    ui->tableWidget->setItem(row,0,new QTableWidgetItem(clientsocket->peerAddress().toString()));       //更新新连接ip
-    ui->tableWidget->setItem(row,1,new QTableWidgetItem(QString("%1").arg(clientsocket->peerPort())));      //更新新连接端口
+    ui->tableWidget->setItem(row,0,new QTableWidgetItem(id));                   //更新卫星id
+    ui->tableWidget->setItem(row,1,new QTableWidgetItem(clientsocket->peerAddress().toString()));       //更新新连接ip
+    ui->tableWidget->setItem(row,2,new QTableWidgetItem(QString("%1").arg(clientsocket->peerPort())));      //更新新连接端口
 
     //添加卫星实时位置
     QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
@@ -127,8 +133,8 @@ void server::disconnected(tcpsocket *clientsocket)
     QString ip = clientsocket->peerAddress().toString();
     QString port = QString("%1").arg(clientsocket->peerPort());
     for(int i = 0;i<row;i++){
-        if(ui->tableWidget->item(i,0)->text() == ip
-           && ui->tableWidget->item(i,1)->text() == port){
+        if(ui->tableWidget->item(i,1)->text() == ip
+           && ui->tableWidget->item(i,2)->text() == port){
             ui->tableWidget->removeRow(i);
             break;
         }
@@ -213,9 +219,9 @@ void server::socketinit()
     }
 
     //关联新的tcp连接产生与更新界面
-    connect(tcpServer,SIGNAL(newclientsocket(tcpsocket*)),this,SLOT(updatenewclient(tcpsocket*)));
+    connect(tcpServer,SIGNAL(newclientsocket(QString,tcpsocket*)),this,SLOT(updatenewclient(QString,tcpsocket*)));
     //关联接收数据的信号与更新界面
-    connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*)));
+    connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*,QString)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*,QString)));
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
 }

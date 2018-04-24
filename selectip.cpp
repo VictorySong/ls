@@ -104,7 +104,7 @@ void selectip::on_pushButton_3_clicked()
 
 void selectip::on_pushButton_2_clicked()
 {
-    client *tem = new client(0,1234);
+    client *tem = new client(0);
     cli.append(tem);
     tem->setWindowTitle(QString("小卫星"));
     connect(tem,SIGNAL(destroyed(QObject*)),this,SLOT(destoryclient(QObject*)));  //服务器窗口摧毁后进行
