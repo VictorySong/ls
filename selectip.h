@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <server.h>
 #include <client.h>
+#include "searchwifi.h"
 
 namespace Ui {
 class selectip;
@@ -24,15 +25,21 @@ private slots:
     void on_pushButton_3_clicked();
 
     void on_pushButton_2_clicked();
+    void wificonnected();
 
 private:
     Ui::selectip *ui;
     server *ser;                            //服务端窗口
     QList<client *>cli;                            //客户端窗口
+    searchwifi *wifi;
+
     void updateipcombox();                          //更新ipcombox
+
 public slots:
     void newser(QObject*);                  //服务器窗口摧毁后执行
     void destoryclient(QObject *);           //客户端窗口摧毁后执行
+
+
 
 };
 

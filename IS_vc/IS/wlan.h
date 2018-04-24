@@ -1,14 +1,29 @@
 #pragma once
-
+#ifndef wlan
+#define wlan
 extern "C" {
-	_declspec(dllexport) bool in();
-	_declspec(dllexport) bool searchwlan();
-	_declspec(dllexport) bool isconnected();
-	_declspec(dllexport) bool connectwlan();
-	_declspec(dllexport) void wlanfree();
-	_declspec(dllexport) bool setwlanInterfaceson();
-	_declspec(dllexport) bool setwlanInterfacesoff();
-	_declspec(dllexport) void changetarget(char * tar, char * tarkey);
-	_declspec(dllexport) bool getwlanInterfaces();
-	_declspec(dllexport) bool openhandle();
+	__declspec(dllexport) bool in();
+	__declspec(dllexport) bool searchwlan();
+	__declspec(dllexport) bool isconnected();
+	__declspec(dllexport) bool connectwlan();
+	__declspec(dllexport) void wlanfree();
+	__declspec(dllexport) bool setwlanInterfaceson();
+	__declspec(dllexport) bool setwlanInterfacesoff();
+	__declspec(dllexport) void changetarget(char * tar, char * tarkey);
+	__declspec(dllexport) bool getwlanInterfaces();
+	__declspec(dllexport) bool openhandle();
+
+	/*bool in();
+	bool searchwlan();
+	bool isconnected();
+	bool connectwlan();
+	void wlanfree();
+	bool setwlanInterfaceson();
+	bool setwlanInterfacesoff();
+	void changetarget(char * tar, char * tarkey);
+	bool getwlanInterfaces();
+	bool openhandle();*/
 }
+#endif // wlan
+
+

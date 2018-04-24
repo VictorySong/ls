@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+
     selectip se(0);
     se.setWindowTitle(QString("选择要用的ip地址"));
     se.show();

@@ -27,7 +27,7 @@ class server : public QWidget
 public:
     explicit server(QWidget *parent = 0);
     ~server();
-
+    void wificonnected();                       //wifi连接成功后
 private slots:
     void on_pushButton_clicked();
 
@@ -49,10 +49,13 @@ private:
     QGraphicsItem *lineItemPointer[12];
     QGraphicsItemGroup group;
 
+    void socketinit();                  //初始化socket
+
 public slots:
     void updatetabelwidget(QByteArray,tcpsocket *);         //更新已有连接界面显示
     void updatenewclient(tcpsocket *);                      //有新连接时更新界面显示
     void disconnected(tcpsocket *);                         //有连接断开时更新视
+
 protected:
     void paintEvent(QPaintEvent *);
 

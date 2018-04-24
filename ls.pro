@@ -45,7 +45,8 @@ SOURCES += \
     tcpsocket.cpp \
     tcpserver.cpp \
     udpbroad.cpp \
-    verification.cpp
+    verification.cpp \
+    searchwifi.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -57,7 +58,8 @@ HEADERS += \
     tcpserver.h \
     udpbroad.h \
     verification.h \
-    wlan.h
+    wlan.h \
+    searchwifi.h
 
 FORMS += \
         mainwindow.ui \
@@ -70,4 +72,5 @@ FORMS += \
 OTHER_FILES += \
             Packet.lib\
             wpcap.lib\
-            WS2_32.lib
+            WS2_32.lib\
+            wlan.lib

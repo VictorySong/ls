@@ -9,6 +9,7 @@ class udpbroad : public QThread
 public:
     udpbroad(QUdpSocket *tem = NULL ,QByteArray datagram = "",int port = 0,QString multicastip = "255.255.255.255");
     void stop();
+    void reset(QUdpSocket *tem = NULL ,QByteArray datagram = "",int port = 0,QString multicastip = "255.255.255.255");
 private:
     QUdpSocket * udpsender;
     volatile bool stopped;                  //停止标志 初始化为false

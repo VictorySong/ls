@@ -11,12 +11,20 @@ selectip::selectip(QWidget *parent) :
     ui->setupUi(this);
 
     ser = NULL;
-    updateipcombox();       //获得可用ip地址
+
+    wifi = new searchwifi();            //搜索wifi的线程
+    connect(wifi,SIGNAL(wificonnected()),this,SLOT(wificonnected()));
+    ui->pushButton_2->hide();               //在未连接到指定wifi的情况下不现实按钮
+    ui->pushButton_3->hide();               //在未连接到指定wifi的情况下不现实按钮
+    wifi->start();
 
 }
 
 selectip::~selectip()
 {
+    wifi->terminate();
+    wifi->wait();
+    delete wifi;
     if(ser)
         ser->close();
 
@@ -29,6 +37,8 @@ selectip::~selectip()
 
 void selectip::updateipcombox()
 {
+    usableip.clear();       //清楚可用ip列表
+    ui->ipcomboBox->clear();    //清楚可用ip显示
     //获取所有网络接口的列表
     QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
     foreach(QNetworkInterface interface,list) //遍历每一个网络接口
@@ -70,6 +80,15 @@ void selectip::on_ipcomboBox_currentIndexChanged(const QString &arg1)
 {
     ip = arg1;
     broadcast = usableip.value(ip);
+
+    //ip地址发生变化时，小卫星和中控监听的地址也要发生变化
+    if(NULL != ser)
+        ser->wificonnected();
+    for(int i = 0;i<cli.count();i++){
+        if(NULL != cli.at(i)){
+            cli.at(i)->wificonnected();
+        }
+    }
 }
 
 void selectip::on_pushButton_3_clicked()
@@ -104,5 +123,12 @@ void selectip::destoryclient(QObject *tem)
             cli.replace(i,NULL);
         }
     }
+}
+
+void selectip::wificonnected()
+{
+    ui->pushButton_2->show();
+    ui->pushButton_3->show();
+    updateipcombox();
 }
 

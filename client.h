@@ -18,16 +18,20 @@ class client : public QWidget
 public:
     explicit client(QWidget *parent = 0,int m = 0);
     ~client();
+    void wificonnected();                       //wifi连接
 
 private:
     Ui::client *ui;
     QUdpSocket *udpServer;              //udp监听
     tcpsocket *tcpsender;              //tcp发送
+
+    void socketinit();                  //初始化socket
 public slots:
     void udpget();                      //处理接收到的udp信息
     void tcpconnected();                //连接成功后
     void newdata(QByteArray,tcpsocket*);        //有新数据到达时
     void tcpdisconnect();               //tcp连接断开时
+
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();

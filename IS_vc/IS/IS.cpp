@@ -53,39 +53,87 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	}
 	return 0;
 }
-void init();
 
-int main(int argc, char* argv[])
+DWORD WINAPI threadwlan(LPVOID lpParameter)
 {
 	char *tar = "MI";
 	char *tarkey = "123456qaz";
 	changetarget(tar,tarkey);
-	if(in()){
-		printf("connect success\n");
-	}else{
-		printf("searching MI ...\n");
+	in();
+	
+	printf("searching MI ...\n");
+	for(;;){
 		for(;;){
-			
 			if(searchwlan()){
 				printf("MI is searched\n");
+				
 				if (!isconnected()) {
 					connectwlan();
 				}else{
 					printf("connect success\n");
 					break;
 				}
-				Sleep(500);
+				Sleep(800);
+				
 			}else{
 				setwlanInterfacesoff();
 				setwlanInterfaceson();
 				printf("MI can not be searched\n");
-				Sleep(500);
 			}
 		}
+		for(;;){
+			//¼ì²éwifiÁ¬½Ó×´Ì¬
+            searchwlan();
+            if(isconnected()){
+                printf("wlan connected\n");
+                Sleep(6000);
+            }else{
+                setwlanInterfacesoff();
+                setwlanInterfaceson();
+                break;
+            }
+		}
+
 	}
-			
+	wlanfree();
+	return 0;
+}
+
+void init();
+
+int main(int argc, char* argv[])
+{
+	/*
+	HANDLE hthread2 = CreateThread(NULL,0,threadwlan,NULL,0,NULL);
+	CloseHandle(hthread2);*/
+	char *tar = "MI";
+	char *tarkey = "123456qaz";
+	changetarget(tar,tarkey);
+	in();
 	
-	//init();
+	printf("searching MI ...\n");
+	for(;;){
+		if(searchwlan()){
+			printf("MI is searched\n");
+			
+			if (!isconnected()) {
+				connectwlan();
+			}else{
+				printf("connect success\n");
+				break;
+			}
+			Sleep(800);
+			
+		}else{
+			setwlanInterfacesoff();
+			setwlanInterfaceson();
+			printf("MI can not be searched\n");
+		}
+	}
+
+	wlanfree();
+
+	init();
     return 0;
 }
 

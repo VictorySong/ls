@@ -19,6 +19,7 @@
 #include <QInputDialog>
 #include <QDialog>
 #include <QPainter>
+#include "wlan.h"
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12

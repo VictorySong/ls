@@ -11,47 +11,8 @@ server::server(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
-
-
-    udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
-    tcpServer = new tcpserver(this);                   //实例化tcpserver对象
-    udpsender->bind(QHostAddress(ip),0);
-    ui->multicastip->setText(broadcast);         //设置udp广播地址
-
-    //加入广播组
-    udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
-    //获取监听的端口和ip
-    QJsonObject json;
-    json.insert("ip",ip);
-    json.insert("port",ui->tcpport->text().toInt());
-    QJsonDocument document;
-    document.setObject(json);
-    QByteArray datagram = document.toJson(QJsonDocument::Compact);
-
-    //启动udp广播线程
-    udpbro = new udpbroad(udpsender,datagram,ui->udpport->text().toInt(),ui->multicastip->text());
-    udpbro->start();
-
-    //监听tcp
-    if(!this->tcpServer->isListening()){
-        if(!this->tcpServer->listen(QHostAddress(ip),ui->tcpport->text().toInt()))
-        {
-            qDebug() << this->tcpServer->errorString();
-        }else{
-
-        }
-        ui->pushButton_2->setText(QString("正在监听"));
-    }else{
-        this->tcpServer->close();   //如果正在监听则关闭
-        ui->pushButton_2->setText(QString("开始监听"));
-    }
-
-    //关联新的tcp连接产生与更新界面
-    connect(tcpServer,SIGNAL(newclientsocket(tcpsocket*)),this,SLOT(updatenewclient(tcpsocket*)));
-    //关联接收数据的信号与更新界面
-    connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*)));
-    //关联连接断开与更新界面
-    connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
+    udpbro = NULL;
+    socketinit();
 
     pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
@@ -202,7 +163,59 @@ void server::paintEvent(QPaintEvent *)
     }
 
     ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中
+}
 
+void server::wificonnected()
+{
+    //清除
+    delete udpsender;
+    delete tcpServer;
+    udpbro->stop();
+    socketinit();
+}
 
+void server::socketinit()
+{
+    udpsender = new QUdpSocket(this);                   //实例化udpsender 对象
+    tcpServer = new tcpserver(this);                   //实例化tcpserver对象
+    udpsender->bind(QHostAddress(ip),0);
+    ui->multicastip->setText(broadcast);         //设置udp广播地址
 
+    //加入广播组
+    udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
+    //获取监听的端口和ip
+    QJsonObject json;
+    json.insert("ip",ip);
+    json.insert("port",ui->tcpport->text().toInt());
+    QJsonDocument document;
+    document.setObject(json);
+    QByteArray datagram = document.toJson(QJsonDocument::Compact);
+
+    //启动udp广播线程
+    if(NULL == udpbro)
+        udpbro = new udpbroad(udpsender,datagram,ui->udpport->text().toInt(),ui->multicastip->text());
+    else
+        udpbro->reset(udpsender,datagram,ui->udpport->text().toInt(),ui->multicastip->text());
+    udpbro->start();
+
+    //监听tcp
+    if(!this->tcpServer->isListening()){
+        if(!this->tcpServer->listen(QHostAddress(ip),ui->tcpport->text().toInt()))
+        {
+            qDebug() << this->tcpServer->errorString();
+        }else{
+
+        }
+        ui->pushButton_2->setText(QString("正在监听"));
+    }else{
+        this->tcpServer->close();   //如果正在监听则关闭
+        ui->pushButton_2->setText(QString("开始监听"));
+    }
+
+    //关联新的tcp连接产生与更新界面
+    connect(tcpServer,SIGNAL(newclientsocket(tcpsocket*)),this,SLOT(updatenewclient(tcpsocket*)));
+    //关联接收数据的信号与更新界面
+    connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*)));
+    //关联连接断开与更新界面
+    connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
 }

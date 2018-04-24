@@ -12,21 +12,7 @@ client::client(QWidget *parent ,int m) :
     ui->setupUi(this);
     ui->id->setText(QString("%1").arg(m));
 
-    udpServer = new QUdpSocket(this);                   //实例化udpsocket对象
-    tcpsender = new tcpsocket(this,1);
-
-    if(!udpServer->bind(QHostAddress(ip),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
-        qDebug()<<"udp接受端绑定端口出错";
-
-    //获取局域网广播地址
-    ui->multicastip->setText(broadcast);
-
-    //采用多播模式会有客户端接收不到的情况
-    udpServer->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
-    connect(udpServer,SIGNAL(readyRead()),this,SLOT(udpget()));             //收到服务器ip和端口信息后立即进行tcp连接并关闭udpsocket句柄
-    connect(tcpsender,SIGNAL(connected()),this,SLOT(tcpconnected()));
-    connect(tcpsender,SIGNAL(updateClients(QByteArray,tcpsocket*)),this,SLOT(newdata(QByteArray,tcpsocket*)));  //接收数据
-    connect(tcpsender,SIGNAL(disconnected()),this,SLOT(tcpdisconnect()));                  //连接断开后
+    socketinit();
 }
 
 client::~client()
@@ -153,4 +139,31 @@ void client::on_pushButton_4_clicked()
 void client::tcpdisconnect()
 {
     ui->pushButton->setText(QString("连接已断开，点击发起连接"));
+}
+
+void client::wificonnected()
+{
+    delete udpServer;
+    delete tcpsender;
+
+    socketinit();
+}
+
+void client::socketinit()
+{
+    udpServer = new QUdpSocket(this);                   //实例化udpsocket对象
+    tcpsender = new tcpsocket(this,1);
+
+    if(!udpServer->bind(QHostAddress(ip),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+        qDebug()<<"udp接受端绑定端口出错";
+
+    //获取局域网广播地址
+    ui->multicastip->setText(broadcast);
+
+    //采用多播模式会有客户端接收不到的情况
+    udpServer->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
+    connect(udpServer,SIGNAL(readyRead()),this,SLOT(udpget()));             //收到服务器ip和端口信息后立即进行tcp连接并关闭udpsocket句柄
+    connect(tcpsender,SIGNAL(connected()),this,SLOT(tcpconnected()));
+    connect(tcpsender,SIGNAL(updateClients(QByteArray,tcpsocket*)),this,SLOT(newdata(QByteArray,tcpsocket*)));  //接收数据
+    connect(tcpsender,SIGNAL(disconnected()),this,SLOT(tcpdisconnect()));                  //连接断开后
 }
