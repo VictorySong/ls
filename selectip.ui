@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>375</width>
-    <height>227</height>
+    <height>211</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,8 +31,17 @@
    </property>
    <item row="1" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
        <item>
         <widget class="QLabel" name="label">
          <property name="sizePolicy">
@@ -72,6 +81,9 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>6</number>
+       </property>
        <item>
         <widget class="QPushButton" name="pushButton_3">
          <property name="text">
@@ -90,7 +102,7 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
+   <item row="0" column="0" alignment="Qt::AlignVCenter">
     <widget class="QTextEdit" name="textEdit">
      <property name="enabled">
       <bool>false</bool>
@@ -104,7 +116,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>100</height>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
