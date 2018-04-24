@@ -276,6 +276,11 @@
       <widget class="QTableWidget" name="tableWidget">
        <column>
         <property name="text">
+         <string>卫星id</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>ip</string>
         </property>
        </column>

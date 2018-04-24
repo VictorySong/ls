@@ -92,34 +92,40 @@ void client::newdata(QByteArray mess, tcpsocket *clientsocket)
     QJsonParseError error;
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
     QVariantMap result = jsondoc.toVariant().toMap();
-    int row = ui->tableWidget->rowCount();
-    if(0 ==row){
-        ui->tableWidget->setRowCount(row+1);
-        ui->tableWidget->setItem(row,0,new QTableWidgetItem(result["ip"].toString()));
-        ui->tableWidget->setItem(row,1,new QTableWidgetItem(result["port"].toString()));
-        ui->tableWidget->setItem(row,2,new QTableWidgetItem(result["x"].toString()));
-        ui->tableWidget->setItem(row,3,new QTableWidgetItem(result["y"].toString()));
-    }else{
-        int i ;
-        for( i = 0;i<row;i++){
-            if(ui->tableWidget->item(i,0)->text() ==result["ip"].toString()
-                    && ui->tableWidget->item(i,1)->text() ==result["port"].toString()){
-                ui->tableWidget->removeCellWidget(i,2);             //先清掉
-                ui->tableWidget->removeCellWidget(i,3);             //先清掉
-                ui->tableWidget->setItem(i,2,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
-                break;
+    if(result.contains(QString("x"))){
+        int row = ui->tableWidget->rowCount();
+        if(0 ==row){
+            ui->tableWidget->setRowCount(row+1);
+            ui->tableWidget->setItem(row,0,new QTableWidgetItem(result["id"].toString()));
+            ui->tableWidget->setItem(row,1,new QTableWidgetItem(result["ip"].toString()));
+            ui->tableWidget->setItem(row,2,new QTableWidgetItem(result["port"].toString()));
+            ui->tableWidget->setItem(row,3,new QTableWidgetItem(result["x"].toString()));
+            ui->tableWidget->setItem(row,4,new QTableWidgetItem(result["y"].toString()));
+        }else{
+            int i ;
+            for( i = 0;i<row;i++){
+                if(ui->tableWidget->item(i,0)->text() ==result["id"].toString()){
+                    ui->tableWidget->removeCellWidget(i,1);             //先清掉
+                    ui->tableWidget->removeCellWidget(i,2);             //先清掉
+                    ui->tableWidget->removeCellWidget(i,3);             //先清掉
+                    ui->tableWidget->removeCellWidget(i,4);             //先清掉
+                    ui->tableWidget->setItem(row,1,new QTableWidgetItem(result["ip"].toString()));  //更新ip
+                    ui->tableWidget->setItem(row,2,new QTableWidgetItem(result["port"].toString()));  //更新端口
+                    ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
+                    ui->tableWidget->setItem(i,4,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
+                    break;
+                }
+            }
+            if(i == row){
+                ui->tableWidget->setRowCount(row+1);
+                ui->tableWidget->setItem(row,0,new QTableWidgetItem(result["id"].toString()));
+                ui->tableWidget->setItem(row,1,new QTableWidgetItem(result["ip"].toString()));
+                ui->tableWidget->setItem(row,2,new QTableWidgetItem(result["port"].toString()));
+                ui->tableWidget->setItem(row,3,new QTableWidgetItem(result["x"].toString()));
+                ui->tableWidget->setItem(row,4,new QTableWidgetItem(result["y"].toString()));
             }
         }
-        if(i == row){
-            ui->tableWidget->setRowCount(row+1);
-            ui->tableWidget->setItem(row,0,new QTableWidgetItem(result["ip"].toString()));
-            ui->tableWidget->setItem(row,1,new QTableWidgetItem(result["port"].toString()));
-            ui->tableWidget->setItem(row,2,new QTableWidgetItem(result["x"].toString()));
-            ui->tableWidget->setItem(row,3,new QTableWidgetItem(result["y"].toString()));
-        }
     }
-
 }
 
 void client::on_pushButton_4_clicked()

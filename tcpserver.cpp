@@ -31,9 +31,7 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
     QJsonObject tem = jsondoc.object();
     tem.insert(QString("ip"),ip);
     tem.insert(QString("port"),port);
-    QJsonDocument tem2;
-    tem2.setObject(tem);
-    QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
+
 
     //插入卫星id
     QHashIterator <QString,tcpsocket *> h(tcpClientSocketList);
@@ -45,6 +43,10 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
             break;
         }
     }
+
+    QJsonDocument tem2;
+    tem2.setObject(tem);
+    QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
 
     //将位置信息转发到其他ip
     QHashIterator <QString,tcpsocket *> i(tcpClientSocketList);
