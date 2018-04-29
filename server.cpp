@@ -82,6 +82,8 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
                 //设置起始点
+                qDebug() << pretem.x << "  " << pretem.y << "  "
+                         << tem.x << "  " << tem.y << endl;
                 if(pretem.x != -1){
                     //设置起始点
                     lastpoint.setX(pretem.x);
@@ -157,11 +159,11 @@ void server::paintEvent(QPaintEvent *)
     }
     if(lineItemNum!=0)
     {
-        qDebug() << "make to 1 status" << endl;
-        qDebug() << "endpoint的数据" << endl << endpoint.x() << "  "
-                 << endpoint.y() <<endl;
-        qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
-                 << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
+//        qDebug() << "make to 1 status" << endl;
+//        qDebug() << "endpoint的数据" << endl << endpoint.x() << "  "
+//                 << endpoint.y() <<endl;
+//        qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
+//                 << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
         if( endpoint.x() == lineItemPointer[lineItemNum-1]->line().x2()
                && endpoint.y() == lineItemPointer[lineItemNum-1]->line().y2() )
         {
@@ -172,8 +174,9 @@ void server::paintEvent(QPaintEvent *)
 
     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
-    qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
-             << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
+    //lineItemPointer[lineItemNum]->setPen();
+//    qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
+//             << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
 
     if(lineItemNum>10)
     {

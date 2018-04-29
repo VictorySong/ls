@@ -48,6 +48,7 @@ private:
     QGraphicsScene scene;
     QGraphicsLineItem *lineItemPointer[12];
     QGraphicsItemGroup group;
+    QColor color;
 
     void socketinit();                  //初始化socket
 

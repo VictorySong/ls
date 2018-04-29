@@ -24,6 +24,7 @@ private:
     Ui::client *ui;
     QUdpSocket *udpServer;              //udp监听
     tcpsocket *tcpsender;              //tcp发送
+    QColor color;
 
     void socketinit();                  //初始化socket
 public slots:
