@@ -46,7 +46,7 @@ private:
     QPoint lastpoint;                   //起点
     QPoint endpoint;                    //终点3
     QGraphicsScene scene;
-    QGraphicsItem *lineItemPointer[12];
+    QGraphicsLineItem *lineItemPointer[12];
     QGraphicsItemGroup group;
 
     void socketinit();                  //初始化socket

@@ -144,7 +144,8 @@ void server::disconnected(tcpsocket *clientsocket)
 
 void server::paintEvent(QPaintEvent *)
 {
-    int static i,lineItemNum;
+    int static i;
+    int static lineItemNum=0;
     qDebug() << "function paintEvent is triggered" << i++ ;
     qDebug() << lastpoint.x() << "  " << lastpoint.y() << "  "
              << endpoint.x() << "  " << endpoint.y() ;
@@ -154,10 +155,26 @@ void server::paintEvent(QPaintEvent *)
     {
         return;
     }
+    if(lineItemNum!=0)
+    {
+        qDebug() << "make to 1 status" << endl;
+        qDebug() << "endpoint的数据" << endl << endpoint.x() << "  "
+                 << endpoint.y() <<endl;
+        qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
+                 << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
+        if( endpoint.x() == lineItemPointer[lineItemNum-1]->line().x2()
+               && endpoint.y() == lineItemPointer[lineItemNum-1]->line().y2() )
+        {
+            return;
+        }
+    }
+
 
     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
-    //如果轨迹数量太多，从场景中移除一段轨迹
+    qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
+             << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
+
     if(lineItemNum>10)
     {
         scene.removeItem(lineItemPointer[0]);
