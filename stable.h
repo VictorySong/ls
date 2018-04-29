@@ -19,6 +19,7 @@
 #include <QInputDialog>
 #include <QDialog>
 #include <QPainter>
+#include <QColor>
 #include "wlan.h"
 
 #ifndef IPTOSBUFFERS
@@ -79,6 +80,7 @@ struct actdevinf{
 struct inf{
     float x;            //卫星横坐标
     float y;            //卫星纵坐标
+    QColor color;       //画卫星轨迹的颜色
 };
 
 
