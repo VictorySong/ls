@@ -25,11 +25,12 @@ void searchwifi::run()
                     emit this->wificonnected();         //触发wifi连接成功的信号
                     break;
                 }
-                Sleep(800);
+                Sleep(5000);
             }else{
                 setwlanInterfacesoff();
                 setwlanInterfaceson();
                 qDebug()<<"MI can not be searched";
+                Sleep(2000);
             }
         }
         for(;;){

@@ -73,12 +73,13 @@ DWORD WINAPI threadwlan(LPVOID lpParameter)
 					printf("connect success\n");
 					break;
 				}
-				Sleep(800);
+				Sleep(3000);
 				
 			}else{
 				setwlanInterfacesoff();
 				setwlanInterfaceson();
 				printf("MI can not be searched\n");
+				Sleep(800);
 			}
 		}
 		for(;;){
@@ -122,12 +123,13 @@ int main(int argc, char* argv[])
 				printf("connect success\n");
 				break;
 			}
-			Sleep(800);
+			Sleep(5000);
 			
 		}else{
 			setwlanInterfacesoff();
 			setwlanInterfaceson();
 			printf("MI can not be searched\n");
+			Sleep(2000);
 		}
 	}
 
@@ -226,8 +228,12 @@ void init(){
 	HANDLE hthread1 = CreateThread(NULL,0,ThreadProc,NULL,0,NULL);
 	CloseHandle(hthread1);
 	for(;;){
-		printf("main\n");
-		Sleep(5000);
+		if(SOCKET_ERROR == (rec_size = recv(tcpsock,rec,BUFFLEN,0))){
+			printf("receive message failed!\n");
+			exit(1);
+		}
+		rec[rec_size] = '\0';
+		printf("receive message:%s\n",rec);		
 	}
 	closesocket(tcpsock);
 	closesocket(s);
