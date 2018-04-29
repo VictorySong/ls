@@ -8,7 +8,7 @@ client::client(QWidget *parent ) :
     QWidget(parent),
     ui(new Ui::client)
 {
-    color = QColor(qrand() % 256, qrand() %256, qrand() % 256);//设置颜色，用于绘制轨迹
+
 
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);

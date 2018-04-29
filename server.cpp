@@ -81,6 +81,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 inf tem;            //现在的位置结构
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
+                tem.color = pretem.color;
                 locationlist.insert(i.key(),tem);
 
                 //设置起始点
@@ -92,6 +93,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                     lastpoint.setY(pretem.y);
                     endpoint.setX(tem.x);
                     endpoint.setY(tem.y);
+                    pen.setColor(pretem.color);
                     this->update();
                 }
 
@@ -122,6 +124,9 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
             inf tem;
             tem.x = -1;
             tem.y = -1;
+            tem.color = QColor(qrand() % 256, qrand() %256, qrand() % 256);//设置颜色，用于绘制轨迹
+            //tem.color = Qt::green;
+            qDebug() << "tem.color was set" << endl;
             locationlist.insert(i.key(),tem);
             qDebug()<<locationlist.value(i.key()).x;
             break;
@@ -150,7 +155,7 @@ void server::paintEvent(QPaintEvent *)
 {
     int static i;
     int static lineItemNum=0;
-    qDebug() << "function paintEvent is triggered" << i++ ;
+    //qDebug() << "function paintEvent is triggered" << i++ ;
     qDebug() << lastpoint.x() << "  " << lastpoint.y() << "  "
              << endpoint.x() << "  " << endpoint.y() ;
 
@@ -176,7 +181,7 @@ void server::paintEvent(QPaintEvent *)
 
     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
-    //lineItemPointer[lineItemNum]->setPen();
+    lineItemPointer[lineItemNum-1]->setPen(pen);
 //    qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
 //             << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
 
