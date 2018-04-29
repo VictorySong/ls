@@ -77,10 +77,12 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                     && i.value()->peerPort() == clientsocket->peerPort()){
                 inf pretem;         //前一个位置结构
                 pretem = locationlist.value(i.key());
+
                 inf tem;            //现在的位置结构
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 locationlist.insert(i.key(),tem);
+
                 //设置起始点
                 qDebug() << pretem.x << "  " << pretem.y << "  "
                          << tem.x << "  " << tem.y << endl;
@@ -121,7 +123,7 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
             tem.x = -1;
             tem.y = -1;
             locationlist.insert(i.key(),tem);
-            qDebug()<<tem.x;
+            qDebug()<<locationlist.value(i.key()).x;
             break;
         }
     }
