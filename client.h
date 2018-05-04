@@ -31,6 +31,7 @@ public slots:
     void tcpconnected();                //连接成功后
     void newdata(QByteArray,tcpsocket*);        //有新数据到达时
     void tcpdisconnect();               //tcp连接断开时
+    void verifyresult(QString);             //验证结果
 
 private slots:
     void on_pushButton_clicked();

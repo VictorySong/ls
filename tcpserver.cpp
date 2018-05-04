@@ -1,5 +1,6 @@
 #include "tcpserver.h"
 #include "tcpsocket.h"
+#include "server.h"
 
 tcpserver::tcpserver(QObject *parent):
     QTcpServer(parent)
@@ -59,7 +60,16 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
             i.value()->write(tem3);
         }
     }
+    inf teminf = server::locationlist.value(tem.value("id").toString());
+    int r,g,b;
+    //获取颜色 并转发到手机端
+    teminf.color.getRgb(&r,&g,&b);
+    tem.insert("R",r);
+    tem.insert("G",g);
+    tem.insert("B",b);
 
+    tem2.setObject(tem);
+    tem3 = tem2.toJson(QJsonDocument::Compact);
     QMutableListIterator<tcpsocket*> j(tcpphonesocket);
     while (j.hasNext()) {
         j.next();

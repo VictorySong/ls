@@ -28,6 +28,9 @@ public:
     explicit server(QWidget *parent = 0);
     ~server();
     void wificonnected();                       //wifi连接成功后
+    static QHash<QString,inf> locationlist;            //记录卫星最新位置
+
+
 private slots:
     void on_pushButton_clicked();
 
@@ -39,7 +42,6 @@ private:
     QUdpSocket *udpsender;              //udp发送
     tcpserver *tcpServer;              //tcp监听
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
-    QHash<QString,inf> locationlist;            //记录卫星最新位置
 
     QPixmap pix;                            //图层
 

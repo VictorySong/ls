@@ -155,9 +155,6 @@ void server::paintEvent(QPaintEvent *)
 {
     int static i;
     int static lineItemNum=0;
-    //qDebug() << "function paintEvent is triggered" << i++ ;
-    qDebug() << lastpoint.x() << "  " << lastpoint.y() << "  "
-             << endpoint.x() << "  " << endpoint.y() ;
 
     //如果lastpoint或endpoint没有数据，则return跳出函数
     if(lastpoint == QPoint(0,0) && endpoint == QPoint(0,0) )
@@ -166,11 +163,7 @@ void server::paintEvent(QPaintEvent *)
     }
     if(lineItemNum!=0)
     {
-//        qDebug() << "make to 1 status" << endl;
-//        qDebug() << "endpoint的数据" << endl << endpoint.x() << "  "
-//                 << endpoint.y() <<endl;
-//        qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
-//                 << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
+
         if( endpoint.x() == lineItemPointer[lineItemNum-1]->line().x2()
                && endpoint.y() == lineItemPointer[lineItemNum-1]->line().y2() )
         {

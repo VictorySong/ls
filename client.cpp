@@ -62,13 +62,14 @@ void client::on_pushButton_clicked()
 
 void client::on_pushButton_2_clicked()
 {
-    tcpsender->abort(); //取消已有的连接
+    tcpsender->close(); //取消已有的连接
+
     ui->pushButton->setText(QString("发起tcp连接"));
 }
 
 void client::tcpconnected()
 {
-    ui->pushButton->setText(QString("已连接"));
+//    ui->pushButton->setText(QString("已连接"));
     ui->localip->setText(tcpsender->localAddress().toString());         //显示当前ip
     ui->localport->setText(QString("%1").arg(tcpsender->localPort()));      //显示当前端口
 }
@@ -174,10 +175,21 @@ void client::socketinit()
     connect(tcpsender,SIGNAL(updateClients(QByteArray,tcpsocket*)),this,SLOT(newdata(QByteArray,tcpsocket*)));  //接收数据
     connect(tcpsender,SIGNAL(disconnected()),this,SLOT(tcpdisconnect()));                  //连接断开后
     connect(tcpsender,SIGNAL(sendid(QString)),this,SLOT(getid(QString)));                       //更新id
+    connect(tcpsender,SIGNAL(sendclientverifyresult(QString)),this,SLOT(verifyresult(QString)));        //验证过程中提示信息
 }
 
 void client::getid(QString id)
 {
     this->setWindowTitle(id);
     ui->id->setText(id);
+}
+
+void client::verifyresult(QString tem)
+{
+    if(tem == "fail")
+        tcpsender->abort();
+    else if(tem == "success")
+        ui->pushButton->setText("连接成功");
+    else
+        ui->pushButton->setText(tem);
 }

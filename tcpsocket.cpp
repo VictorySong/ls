@@ -40,12 +40,15 @@ void tcpsocket::dataReceived()
 
 void tcpsocket::slotDisconnected()
 {
+    disconnect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
+    connect(this,SIGNAL(readyRead()),this,SLOT(waitverification()));
     emit disconnected(this);
 }
 
 void tcpsocket::verifyidclient()
 {
     verification tem;
+    emit sendclientverifyresult("验证中..");
     if(tem.exec() == QDialog::Accepted){
         //发送位置信息
         QJsonObject json;
@@ -57,6 +60,9 @@ void tcpsocket::verifyidclient()
         emit sendid(tem.id);                    //更新卫星窗口id
         if(this->isWritable())
             this->write(datagram);
+    }else{
+        emit sendclientverifyresult("fail");
+        this->close();
     }
 }
 
@@ -77,6 +83,7 @@ void tcpsocket::waitverification()
         //验证成功后
         disconnect(this,SIGNAL(readyRead()),this,SLOT(waitverification()));
         connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
+        emit sendclientverifyresult("success");
     }else{
         QMessageBox::information(0, QString("验证出错！"), QString("id或密码错误"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         this->close();
