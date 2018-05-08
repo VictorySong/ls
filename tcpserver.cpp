@@ -73,13 +73,7 @@ void tcpserver::updateClients(QByteArray mes, tcpsocket *clientsocket)
     QMutableListIterator<tcpsocket*> j(tcpphonesocket);
     while (j.hasNext()) {
         j.next();
-        if(j.value()->peerAddress().toString() != ip){
-            qDebug()<<"转发到手机客户端";
-            j.value()->write(tem3);
-        }else if(j.value()->peerPort() != port){
-            qDebug()<<"转发到手机客户端";
-            j.value()->write(tem3);
-        }
+        j.value()->write(tem3);
     }
 }
 
@@ -92,6 +86,20 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
         if(i.value()->socketDescriptor() == t){
             tcpClientSocketList.remove(i.key());
             emit disconnected(clientsocket);
+
+            //通知手机端某卫星断开
+            QMutableListIterator<tcpsocket*> k(tcpphonesocket);
+            QJsonObject tem ;
+            tem.insert("id",i.key());
+            tem.insert("status",0);             //状态为0表示断开
+            QJsonDocument tem2;
+            tem2.setObject(tem);
+            QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
+            while (k.hasNext()) {
+                k.next();
+                k.value()->write(tem3);
+            }
+
             break;
         }
     }
@@ -122,6 +130,19 @@ void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
     //将tcpClientSocket加入客户端套接字列表以便管理
     tcpClientSocketList.insert(id,clientsocket);
     emit newclientsocket(id,clientsocket);
+
+    //通知手机端某卫星连接
+    QMutableListIterator<tcpsocket*> k(tcpphonesocket);
+    QJsonObject tem ;
+    tem.insert("id",id);
+    tem.insert("status",1);             //状态为1表示连接
+    QJsonDocument tem2;
+    tem2.setObject(tem);
+    QByteArray tem3 = tem2.toJson(QJsonDocument::Compact);
+    while (k.hasNext()) {
+        k.next();
+        k.value()->write(tem3);
+    }
     qDebug()<<tcpClientSocketList;
 
 }

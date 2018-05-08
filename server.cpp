@@ -13,6 +13,8 @@ server::server(QWidget *parent) :
     ui->setupUi(this);
     udpbro = NULL;
     socketinit();
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
+    connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(tablewidget_clicked(int,int)));
 
     pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
@@ -114,6 +116,12 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
     ui->tableWidget->setItem(row,0,new QTableWidgetItem(id));                   //更新卫星id
     ui->tableWidget->setItem(row,1,new QTableWidgetItem(clientsocket->peerAddress().toString()));       //更新新连接ip
     ui->tableWidget->setItem(row,2,new QTableWidgetItem(QString("%1").arg(clientsocket->peerPort())));      //更新新连接端口
+
+    QTableWidgetItem *tem = new QTableWidgetItem("断开");
+    tem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidget->setItem(row,5,tem);
+
 
     //添加卫星实时位置
     QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
@@ -244,4 +252,14 @@ void server::socketinit()
     connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*,QString)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*,QString)));
     //关联连接断开与更新界面
     connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
+}
+
+void server::tablewidget_clicked(int row, int colum)
+{
+    QString id = ui->tableWidget->item(row,0)->text();
+    //断开连接
+    tcpServer->tcpClientSocketList.value(id)->close();
+    //从列表中删除
+    tcpServer->tcpClientSocketList.remove(id);
+    qDebug()<<row<<colum;
 }

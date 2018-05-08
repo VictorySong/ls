@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
-    <height>294</height>
+    <width>830</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,24 @@
       </layout>
      </widget>
      <widget class="QWidget" name="widget_2" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>650</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>650</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -150,6 +168,24 @@
        </item>
        <item>
         <widget class="QTableWidget" name="tableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>632</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>632</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <column>
           <property name="text">
            <string>卫星id</string>
@@ -173,6 +209,11 @@
          <column>
           <property name="text">
            <string>纵坐标y</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>断开连接</string>
           </property>
          </column>
         </widget>
