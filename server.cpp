@@ -169,6 +169,8 @@ void server::paintEvent(QPaintEvent *)
     {
         return;
     }
+
+    //防止在没有发送新位置数据的情况下，paintEvent函数被触发导致数据丢失的问题
     if(lineItemNum!=0)
     {
 
@@ -186,7 +188,7 @@ void server::paintEvent(QPaintEvent *)
 //    qDebug() << "linepointer的数据" << endl << lineItemPointer[lineItemNum-1]->line().x2() << "  "
 //             << lineItemPointer[lineItemNum-1]->line().y2() <<endl;
 
-    if(lineItemNum>10)
+    if(lineItemNum>20)
     {
         scene.removeItem(lineItemPointer[0]);
         for(int j=0;j<lineItemNum-1;j++)

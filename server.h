@@ -48,7 +48,7 @@ private:
     QPoint lastpoint;                   //起点
     QPoint endpoint;                    //终点3
     QGraphicsScene scene;
-    QGraphicsLineItem *lineItemPointer[12];
+    QGraphicsLineItem *lineItemPointer[100];
     QGraphicsItemGroup group;
     QPen pen;
 
