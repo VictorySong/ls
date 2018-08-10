@@ -198,6 +198,8 @@ void server::paintEvent(QPaintEvent *)
         lineItemNum--;
     }
 
+    //this is bullshit in branch ToDistinguishTrajectory
+
     ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中
 }
 
