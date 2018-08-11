@@ -2,8 +2,8 @@
 #ifndef wlan
 #define wlan
 extern "C" {
-    __declspec(dllexport) bool in();//初始化
-    __declspec(dllexport) bool searchwlan();//
+    	__declspec(dllexport) bool in();//初始化
+    	__declspec(dllexport) bool searchwlan();//
 	__declspec(dllexport) bool isconnected();
 	__declspec(dllexport) bool connectwlan();
 	__declspec(dllexport) void wlanfree();
