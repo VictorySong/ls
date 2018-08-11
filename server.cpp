@@ -18,7 +18,7 @@ server::server(QWidget *parent) :
 
     pix = QPixmap(100,100);         //设置画布大小
     pix.fill(Qt::white);
-    scene.addItem(&group);
+    //scene.addItem(&group);
     lastpoint.setX(0);
     lastpoint.setY(0);
     endpoint.setX(0);
