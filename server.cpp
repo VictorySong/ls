@@ -81,26 +81,43 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
                 tem.color = pretem.color;
-                locationlist.insert(i.key(),tem);
+
+                if(pretem.x == -1)//发送的数据点不足两个的情况
+                {
+                    tem.lineItemNum=0;
+                    locationlist.insert(i.key(),tem);
+                }
 
                 //设置起始点
                 qDebug() << pretem.x << "  " << pretem.y << "  "
                          << tem.x << "  " << tem.y << endl;
+
                 if(pretem.x != -1){
                     //设置起始点
                     lastpoint.setX(pretem.x);
                     lastpoint.setY(pretem.y);
                     endpoint.setX(tem.x);
                     endpoint.setY(tem.y);
-                    pen.setColor(pretem.color);
+                    pen.setColor(pretem.color);//设置颜色
+                    lineItemNum=pretem.lineItemNum;//设置轨迹数量
+                    for(int k=0;k<pretem.lineItemNum;k++)//复制所有的轨迹段
+                    {
+                        tem.lineItemPointer[k]=pretem.lineItemPointer[k];
+                    }
+
+                    //总的二级指针lineItemPointer，指向tem的lineItemPointer，
+                    //tem的lineItemPointer是专属于各个客户端的指针数组，用于记录每一个的轨迹段数据
+                    lineItemPointer=tem.lineItemPointer;
+
 
                     //从这里开始正式画图
                     //this->update();
                     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
                     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
+                    //设置画笔颜色
                     lineItemPointer[lineItemNum-1]->setPen(pen);
-
-                    if(lineItemNum>20)
+                    //为了防止轨迹太多，画面太乱，轨迹段数量超过一定量后就删减掉旧数据
+                    if(lineItemNum>10)
                     {
                         scene.removeItem(lineItemPointer[0]);
                         for(int j=0;j<lineItemNum-1;j++)
@@ -109,7 +126,10 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                         }
                         lineItemNum--;
                     }
-                    ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中
+
+                    tem.lineItemNum=lineItemNum;       //记录轨迹段数量
+                    locationlist.insert(i.key(),tem);  //将最新的inf结构体数据加入到locationlist中
+                    ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中，即是画出图像
                 }
 
                 break;
