@@ -49,7 +49,7 @@ private:
     QPoint endpoint;                    //终点3
     QGraphicsScene scene;
     QGraphicsLineItem *lineItemPointer[100];
-    //QGraphicsItemGroup group;
+    int lineItemNum=0;
     QPen pen;
 
     void socketinit();                  //初始化socket
@@ -61,7 +61,7 @@ public slots:
 
 
 protected:
-    void paintEvent(QPaintEvent *);
+    //void paintEvent(QPaintEvent *);
 
 };
 
