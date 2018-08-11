@@ -11,7 +11,7 @@ server::server(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
-    udpbro = NULL;
+    udpbro = NULL;  //udp广播
     socketinit();
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
     connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(tablewidget_clicked(int,int)));
@@ -217,7 +217,8 @@ void server::socketinit()
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
-    //获取监听的端口和ip
+
+    //获取监听的端口和ip  udp广播发送的信息
     QJsonObject json;
     json.insert("ip",ip);
     json.insert("port",ui->tcpport->text().toInt());

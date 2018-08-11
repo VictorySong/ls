@@ -15,7 +15,7 @@ void tcpserver::incomingConnection(int socketDescriptor)
     //创建一个新的TcpClientSocket与客户端通信
     tcpsocket *tcpClientSocket=new tcpsocket(this,2);           //服务端
     //将新创建的TcpClientSocket的套接字描述符指定为参数socketDescriptor
-    tcpClientSocket->setSocketDescriptor(socketDescriptor);
+    tcpClientSocket->setSocketDescriptor(socketDescriptor);//(tcp连接建成)
     //将验证通过信号和验证通过处理程序关联
     connect(tcpClientSocket,SIGNAL(verificationpassed(QString,tcpsocket*)),this,SLOT(newverifiedclient(QString,tcpsocket*)));
     connect(tcpClientSocket,SIGNAL(deletetcpsocket(tcpsocket*)),this,SLOT(releasetcpsocket(tcpsocket*)));           //验证不通过后释放该连接内存
@@ -196,7 +196,7 @@ void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
                 //验证通过
                 disconnect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(verifyidserver()));
                 connect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(dataReceived()));
-                emit clientsocket->verificationpassed(result["id"].toString(),clientsocket);
+                emit clientsocket->verificationpassed(result["id"].toString(),clientsocket);        //触发验证通过的信号
             }
         }else{
             //列表中已经有该id的连接

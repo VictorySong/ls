@@ -93,6 +93,7 @@ void selectip::on_ipcomboBox_currentIndexChanged(const QString &arg1)
 
 void selectip::on_pushButton_3_clicked()
 {
+    //打开服务端
     if(NULL == ser){
         ser = new server(0);
         ser->setWindowTitle(QString("中控"));
