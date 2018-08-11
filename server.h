@@ -60,10 +60,6 @@ public slots:
     void updatenewclient(QString,tcpsocket *);                      //有新连接时更新界面显示
     void disconnected(tcpsocket *);                         //有连接断开时更新视
 
-
-protected:
-    //void paintEvent(QPaintEvent *);
-
 };
 
 #endif // SERVER_H
