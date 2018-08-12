@@ -249,10 +249,13 @@ void server::socketinit()
 
 void server::tablewidget_clicked(int row, int colum)
 {
-    QString id = ui->tableWidget->item(row,0)->text();
-    //断开连接
-    tcpServer->tcpClientSocketList.value(id)->close();
-    //从列表中删除
-    tcpServer->tcpClientSocketList.remove(id);
-    qDebug()<<row<<colum;
+    if(colum == 5){
+        QString id = ui->tableWidget->item(row,0)->text();
+        //断开连接
+        tcpServer->tcpClientSocketList.value(id)->close();
+        //从列表中删除
+        tcpServer->tcpClientSocketList.remove(id);
+        qDebug()<<row<<colum;
+    }
+
 }
