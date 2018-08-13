@@ -22,6 +22,7 @@
 #include <QColor>
 #include <QGraphicsItem>
 #include "wlan.h"
+#include "headrectitem.h"
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12
@@ -85,7 +86,7 @@ struct inf{
     int lineItemNum;    //用于记录每个客户端的各自的轨迹段数量
     QGraphicsLineItem *lineItemPointer[100];
     //lineItemPointer是一个指针数组，用于记录客户端每一个的轨迹段数据
-    QGraphicsItem *headRect;
+    headRectItem *headRect;
 };
 
 

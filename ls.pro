@@ -46,7 +46,8 @@ SOURCES += \
     tcpserver.cpp \
     udpbroad.cpp \
     verification.cpp \
-    searchwifi.cpp
+    searchwifi.cpp \
+    headrectitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS += \
     udpbroad.h \
     verification.h \
     wlan.h \
-    searchwifi.h
+    searchwifi.h \
+    headrectitem.h
 
 FORMS += \
         mainwindow.ui \
