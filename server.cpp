@@ -138,6 +138,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
 
                     tem.lineItemNum=lineItemNum;       //记录轨迹段数量
                     locationlist.insert(i.key(),tem);  //将最新的inf结构体数据加入到locationlist中
+                    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
                     ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中，即是画出图像
 
                 }
