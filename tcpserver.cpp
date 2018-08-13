@@ -182,7 +182,6 @@ void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
                                                              tem,
                                                              QMessageBox::Yes | QMessageBox::No,
                                                             QMessageBox::No)){
-                    qDebug()<<clientsocket;
                     clientsocket->abort();
                     emit clientsocket->deletetcpsocket(clientsocket);                     //发送释放这个内存的信号
                     return;

@@ -49,7 +49,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
     qDebug()<<error.errorString();
     QVariantMap result = jsondoc.toVariant().toMap();
-    if(result.contains(QString("x"))){
+    if(result["type"].toString() == QString("location")){
         QString ip = clientsocket->peerAddress().toString();
         QString port = QString("%1").arg(clientsocket->peerPort());
 
@@ -61,8 +61,8 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 ui->tableWidget->removeCellWidget(i,2);             //先清掉
                 ui->tableWidget->removeCellWidget(i,3);             //先清掉
                 ui->tableWidget->removeCellWidget(i,4);             //先清掉
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(ip));     //更新ip地址
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(port));         //更新端口
+                ui->tableWidget->setItem(i,1,new QTableWidgetItem(ip));     //更新ip地址
+                ui->tableWidget->setItem(i,2,new QTableWidgetItem(port));         //更新端口
                 ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
                 ui->tableWidget->setItem(i,4,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
                 break;
@@ -151,8 +151,12 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
 
     QTableWidgetItem *tem = new QTableWidgetItem("断开");
     tem->setTextAlignment(Qt::AlignCenter);
-
     ui->tableWidget->setItem(row,5,tem);
+
+    QTableWidgetItem *tem1 = new QTableWidgetItem("发送指令");
+    tem1->setTextAlignment(Qt::AlignCenter);
+    ui->tableWidget->setItem(row,6,tem1);
+
 
 
     //添加卫星实时位置
@@ -177,7 +181,6 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
 
 void server::disconnected(tcpsocket *clientsocket)
 {
-    qDebug()<<"lianjieyiduankaifjkfjsdkfl";
     int row = ui->tableWidget->rowCount();
     QString ip = clientsocket->peerAddress().toString();
     QString port = QString("%1").arg(clientsocket->peerPort());
@@ -256,6 +259,24 @@ void server::tablewidget_clicked(int row, int colum)
         //从列表中删除
         tcpServer->tcpClientSocketList.remove(id);
         qDebug()<<row<<colum;
+    }
+    if(colum == 6){
+        Instruction tem;
+        tem.setWindowTitle("给"+ui->tableWidget->item(row,0)->text()+"发送指令");
+        if(tem.exec() == QDialog::Accepted){
+            //发送指令信息
+            QJsonParseError error;
+            QJsonDocument jsondoc = QJsonDocument::fromJson(tem.order.toLatin1(),&error);       //转化成json对象
+            qDebug()<<(error.error==0);
+            qDebug()<<tem.order;
+            QString id = ui->tableWidget->item(row,0)->text();
+            tcpsocket * tem1 = tcpServer->tcpClientSocketList.value(id);
+            if(tem1->isWritable())
+                tem1->write(tem.order.toLatin1());
+        }else{
+
+
+        }
     }
 
 }

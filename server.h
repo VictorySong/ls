@@ -6,6 +6,7 @@
 #include <tcpserver.h>
 #include <tcpsocket.h>
 #include <udpbroad.h>
+#include <instruction.h>
 
 #include <QtGui>
 #include <QGraphicsView>
