@@ -94,7 +94,6 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
 
                     //设置头部矩形,并添加到场景中
                     //scene.addRect(tem.x-10,tem.y-10,20,20,pen,brush);
-                    QGraphicsRectItem *head = new QGraphicsRectItem(tem.x-10,tem.y-10,20,20);
                     tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20);
                     tem.headRect->setPen(pen);
                     tem.headRect->setBrush(brush);
