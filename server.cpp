@@ -11,7 +11,7 @@ server::server(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
-    udpbro = NULL;
+    udpbro = NULL;  //udp广播
     socketinit();
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
     connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(tablewidget_clicked(int,int)));
@@ -49,7 +49,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
     qDebug()<<error.errorString();
     QVariantMap result = jsondoc.toVariant().toMap();
-    if(result.contains(QString("x"))){
+    if(result["type"].toString() == QString("location")){
         QString ip = clientsocket->peerAddress().toString();
         QString port = QString("%1").arg(clientsocket->peerPort());
 
@@ -61,8 +61,8 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 ui->tableWidget->removeCellWidget(i,2);             //先清掉
                 ui->tableWidget->removeCellWidget(i,3);             //先清掉
                 ui->tableWidget->removeCellWidget(i,4);             //先清掉
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(ip));     //更新ip地址
-                ui->tableWidget->setItem(i,3,new QTableWidgetItem(port));         //更新端口
+                ui->tableWidget->setItem(i,1,new QTableWidgetItem(ip));     //更新ip地址
+                ui->tableWidget->setItem(i,2,new QTableWidgetItem(port));         //更新端口
                 ui->tableWidget->setItem(i,3,new QTableWidgetItem(result["x"].toString()));       //更新横坐标
                 ui->tableWidget->setItem(i,4,new QTableWidgetItem(result["y"].toString()));           //更新纵坐标
                 break;
@@ -116,7 +116,6 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                     lineItemPointer=tem.lineItemPointer;
 
                     //从这里开始正式画图
-                    //this->update();
                     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
 
                     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
@@ -163,8 +162,12 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
 
     QTableWidgetItem *tem = new QTableWidgetItem("断开");
     tem->setTextAlignment(Qt::AlignCenter);
-
     ui->tableWidget->setItem(row,5,tem);
+
+    QTableWidgetItem *tem1 = new QTableWidgetItem("发送指令");
+    tem1->setTextAlignment(Qt::AlignCenter);
+    ui->tableWidget->setItem(row,6,tem1);
+
 
 
     //添加卫星实时位置
@@ -189,7 +192,6 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
 
 void server::disconnected(tcpsocket *clientsocket)
 {
-    qDebug()<<"lianjieyiduankaifjkfjsdkfl";
     int row = ui->tableWidget->rowCount();
     QString ip = clientsocket->peerAddress().toString();
     QString port = QString("%1").arg(clientsocket->peerPort());
@@ -202,25 +204,6 @@ void server::disconnected(tcpsocket *clientsocket)
     }
 //    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
 }
-
-
-
-    //如果lastpoint或endpoint没有数据，则return跳出函数
-//    if(lastpoint == QPoint(0,0) && endpoint == QPoint(0,0) )
-//    {
-//        return;
-//    }
-
-    //防止在没有发送新位置数据的情况下，paintEvent函数被触发导致数据丢失的问题
-//    if(lineItemNum!=0)
-//    {
-
-//        if( endpoint.x() == lineItemPointer[lineItemNum-1]->line().x2()
-//               && endpoint.y() == lineItemPointer[lineItemNum-1]->line().y2() )
-//        {
-//            return;
-//        }
-//    }
 
 
 void server::wificonnected()
@@ -241,7 +224,8 @@ void server::socketinit()
 
     //加入广播组
     udpsender->joinMulticastGroup(QHostAddress(ui->multicastip->text()));
-    //获取监听的端口和ip
+
+    //获取监听的端口和ip  udp广播发送的信息
     QJsonObject json;
     json.insert("ip",ip);
     json.insert("port",ui->tcpport->text().toInt());
@@ -280,10 +264,31 @@ void server::socketinit()
 
 void server::tablewidget_clicked(int row, int colum)
 {
-    QString id = ui->tableWidget->item(row,0)->text();
-    //断开连接
-    tcpServer->tcpClientSocketList.value(id)->close();
-    //从列表中删除
-    tcpServer->tcpClientSocketList.remove(id);
-    qDebug()<<row<<colum;
+    if(colum == 5){
+        QString id = ui->tableWidget->item(row,0)->text();
+        //断开连接
+        tcpServer->tcpClientSocketList.value(id)->close();
+        //从列表中删除
+        tcpServer->tcpClientSocketList.remove(id);
+        qDebug()<<row<<colum;
+    }
+    if(colum == 6){
+        Instruction tem;
+        tem.setWindowTitle("给"+ui->tableWidget->item(row,0)->text()+"发送指令");
+        if(tem.exec() == QDialog::Accepted){
+            //发送指令信息
+            QJsonParseError error;
+            QJsonDocument jsondoc = QJsonDocument::fromJson(tem.order.toLatin1(),&error);       //转化成json对象
+            qDebug()<<(error.error==0);
+            qDebug()<<tem.order;
+            QString id = ui->tableWidget->item(row,0)->text();
+            tcpsocket * tem1 = tcpServer->tcpClientSocketList.value(id);
+            if(tem1->isWritable())
+                tem1->write(tem.order.toLatin1());
+        }else{
+
+
+        }
+    }
+
 }

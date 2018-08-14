@@ -78,6 +78,7 @@ void client::on_pushButton_3_clicked()
 {
     //发送位置信息
     QJsonObject json;
+    json.insert("type","location"); //信息类型为位置信息
     json.insert("x",ui->x->text().toFloat());
     json.insert("y",ui->y->text().toFloat());
     QJsonDocument document;
@@ -95,7 +96,8 @@ void client::newdata(QByteArray mess, tcpsocket *clientsocket)
     QJsonParseError error;
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
     QVariantMap result = jsondoc.toVariant().toMap();
-    if(result.contains(QString("x"))){
+
+    if(result["type"].toString() == QString("location")){
         int row = ui->tableWidget->rowCount();
         if(0 ==row){
             ui->tableWidget->setRowCount(row+1);
@@ -127,6 +129,15 @@ void client::newdata(QByteArray mess, tcpsocket *clientsocket)
                 ui->tableWidget->setItem(row,3,new QTableWidgetItem(result["x"].toString()));
                 ui->tableWidget->setItem(row,4,new QTableWidgetItem(result["y"].toString()));
             }
+        }
+    }
+    if(result["type"].toString() == QString("order")){
+        if(QMessageBox::No == QMessageBox::question(0,
+                                                     tr("收到指令"),
+                                                     mess,
+                                                     QMessageBox::Yes ,
+                                                    QMessageBox::Yes)){
+
         }
     }
 }

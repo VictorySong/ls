@@ -70,7 +70,7 @@ void tcpsocket::verifyidserver()
 {
     qDebug()<<"有新数据";
     QByteArray buff;
-    buff = this->read(this->bytesAvailable());
+    buff = this->read(this->bytesAvailable());          //把数据从缓存区取出
     qDebug()<<buff;
     emit verifyserver(buff,this);
 }
