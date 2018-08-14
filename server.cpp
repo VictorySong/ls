@@ -95,7 +95,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                     //设置头部矩形,并添加到场景中
                     //scene.addRect(tem.x-10,tem.y-10,20,20,pen,brush);
                     QGraphicsRectItem *head = new QGraphicsRectItem(tem.x-10,tem.y-10,20,20);
-                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20,brush,pen);
+                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20);
                     tem.headRect->setPen(pen);
                     tem.headRect->setBrush(brush);
                     scene.addItem(tem.headRect);
@@ -146,7 +146,7 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
 
                     //添新建当前轨迹的头部矩形，并添加到场景scene中
                     //tem.headRect = scene.addRect(endpoint.x()-10,endpoint.y()-10,20,20,pen,brush);
-                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20,brush,pen);
+                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20);
                     tem.headRect->setPen(pen);
                     tem.headRect->setBrush(brush);
                     scene.addItem(tem.headRect);
