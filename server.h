@@ -16,6 +16,8 @@
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
+#include <QGraphicsRectItem>
+#include <QAbstractGraphicsShapeItem>
 
 namespace Ui {
 class server;

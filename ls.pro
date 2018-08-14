@@ -47,7 +47,13 @@ SOURCES += \
     udpbroad.cpp \
     verification.cpp \
     searchwifi.cpp \
+    headrectitem.cpp \
     instruction.cpp
+
+    instruction.cpp
+
+    headrectitem.cpp
+
 
 HEADERS += \
         mainwindow.h \
@@ -61,7 +67,13 @@ HEADERS += \
     verification.h \
     wlan.h \
     searchwifi.h \
+    headrectitem.h \
     instruction.h
+
+    instruction.h
+
+    headrectitem.h
+
 
 FORMS += \
         mainwindow.ui \
@@ -70,6 +82,7 @@ FORMS += \
     server.ui \
     client.ui \
     verification.ui \
+    instruction.ui \
     instruction.ui
 
 OTHER_FILES += \
