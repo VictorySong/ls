@@ -46,7 +46,8 @@ SOURCES += \
     tcpserver.cpp \
     udpbroad.cpp \
     verification.cpp \
-    searchwifi.cpp
+    searchwifi.cpp \
+    instruction.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS += \
     udpbroad.h \
     verification.h \
     wlan.h \
-    searchwifi.h
+    searchwifi.h \
+    instruction.h
 
 FORMS += \
         mainwindow.ui \
@@ -67,7 +69,8 @@ FORMS += \
     selectip.ui \
     server.ui \
     client.ui \
-    verification.ui
+    verification.ui \
+    instruction.ui
 
 OTHER_FILES += \
             Packet.lib\

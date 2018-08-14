@@ -216,6 +216,11 @@
            <string>断开连接</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>发送指令</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>

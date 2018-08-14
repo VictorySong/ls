@@ -33,7 +33,7 @@ private:
     QList<client *>cli;                            //客户端窗口
     searchwifi *wifi;
 
-    void updateipcombox();                          //更新ipcombox
+    void updateipcombox();                          //更新ipcombox（可用ip）
 
 public slots:
     void newser(QObject*);                  //服务器窗口摧毁后执行
