@@ -7,12 +7,14 @@
 #include <QRect>
 #include <QRectF>
 #include <QtGui>
+#include "tcpsocket.h"
 
 
 class headRectItem : public QGraphicsRectItem
 {
 public:
-    headRectItem(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent = nullptr);
+    headRectItem(qreal x, qreal y, qreal width, qreal height,
+                 QHashIterator <QString,tcpsocket *> i,QGraphicsItem *parent = nullptr);
 
 protected:
 
