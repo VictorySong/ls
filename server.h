@@ -16,6 +16,8 @@
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
+#include <QGraphicsRectItem>
+#include <QAbstractGraphicsShapeItem>
 
 namespace Ui {
 class server;
@@ -53,6 +55,7 @@ private:
     //二级指针，用于指向各个客户端记录轨迹段数据的lineItemPoninter指针数组，便于绘制轨迹
     int lineItemNum=0;
     QPen pen;
+    QBrush brush;
 
     void socketinit();                  //初始化socket
 

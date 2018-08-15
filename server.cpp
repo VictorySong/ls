@@ -85,6 +85,21 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 if(pretem.x == -1)//发送的数据点不足两个的情况
                 {
                     tem.lineItemNum=0;
+
+                    //设置画笔的属性、刷子的属性，用于绘制轨迹和头部矩形
+                    pen.setColor(tem.color);
+                    pen.setWidth(2);
+                    brush.setStyle(Qt::SolidPattern);
+                    brush.setColor(tem.color);
+
+                    //设置头部矩形,并添加到场景中
+                    //scene.addRect(tem.x-10,tem.y-10,20,20,pen,brush);
+                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20,i);
+                    tem.headRect->setPen(pen);
+                    tem.headRect->setBrush(brush);
+                    scene.addItem(tem.headRect);
+
+                    //inf结构体的数据都设置好了，插入locationlist中
                     locationlist.insert(i.key(),tem);
                 }
 
@@ -92,29 +107,49 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                 qDebug() << pretem.x << "  " << pretem.y << "  "
                          << tem.x << "  " << tem.y << endl;
 
-                if(pretem.x != -1){
-                    //设置起始点
+                if(pretem.x != -1)
+                {
+                    //设置所画轨迹线段的起点和终点
                     lastpoint.setX(pretem.x);
                     lastpoint.setY(pretem.y);
                     endpoint.setX(tem.x);
                     endpoint.setY(tem.y);
+
+                    //设置画笔和画刷的属性
                     pen.setColor(pretem.color);//设置颜色
-                    lineItemNum=pretem.lineItemNum;//设置轨迹数量
-                    for(int k=0;k<pretem.lineItemNum;k++)//复制所有的轨迹段
+                    pen.setWidth(2);
+                    brush.setStyle(Qt::SolidPattern);
+                    brush.setColor(pretem.color);
+
+                    //从pretem中读取轨迹段指针数据到tem
+                    for(int k=0;k<pretem.lineItemNum;k++)
                     {
                         tem.lineItemPointer[k]=pretem.lineItemPointer[k];
                     }
 
-                    //总的二级指针lineItemPointer，指向tem的lineItemPointer，
-                    //tem的lineItemPointer是专属于各个客户端的指针数组，用于记录每一个的轨迹段数据
+                    //读取轨迹数量
+                    lineItemNum=pretem.lineItemNum;
+                    //读取轨迹段数据指针
                     lineItemPointer=tem.lineItemPointer;
 
-
                     //从这里开始正式画图
-                    //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer记录
+
+                    //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer进行记录
                     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
-                    //设置画笔颜色
+
+                    //设置画轨迹的画笔颜色
                     lineItemPointer[lineItemNum-1]->setPen(pen);
+
+                    //删除上一段轨迹的头部矩形
+                    scene.removeItem(pretem.headRect);
+
+                    //添新建当前轨迹的头部矩形，并添加到场景scene中
+                    //tem.headRect = scene.addRect(endpoint.x()-10,endpoint.y()-10,20,20,pen,brush);
+                    tem.headRect = new headRectItem(tem.x-10,tem.y-10,20,20,i);
+                    tem.headRect->setPen(pen);
+                    tem.headRect->setBrush(brush);
+                    scene.addItem(tem.headRect);
+
                     //为了防止轨迹太多，画面太乱，轨迹段数量超过一定量后就删减掉旧数据
                     if(lineItemNum>10)
                     {
@@ -126,9 +161,15 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                         lineItemNum--;
                     }
 
-                    tem.lineItemNum=lineItemNum;       //记录轨迹段数量
-                    locationlist.insert(i.key(),tem);  //将最新的inf结构体数据加入到locationlist中
-                    ui->graphicsView->setScene(&scene);//把场景添加到ui中GraphicsView的框图中，即是画出图像
+                    //记录轨迹段数量
+                    tem.lineItemNum=lineItemNum;
+
+                    //将最新的inf结构体数据加入到locationlist中
+                    locationlist.insert(i.key(),tem);
+                    qDebug() << "卫星id" << i.key() << endl;
+                    //将场景scene显示在server.ui的graphicsView中，即是画出图像
+                    ui->graphicsView->setRenderHint(QPainter::Antialiasing);//抗锯齿
+                    ui->graphicsView->setScene(&scene);
                 }
 
                 break;
@@ -193,6 +234,7 @@ void server::disconnected(tcpsocket *clientsocket)
     }
 //    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
 }
+
 
 void server::wificonnected()
 {
