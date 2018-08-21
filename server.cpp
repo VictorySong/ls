@@ -11,6 +11,17 @@ server::server(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
+
+    //添加工具栏
+    QToolBar *toolbar = new QToolBar(this); //变量还必须在堆中
+    toolbar->setIconSize(QSize(16,16));
+    toolbar->addAction(QString("主页"));
+    toolbar->addAction(QString("传输文件"));
+    toolbar->addAction(QString("传输中"));
+    toolbar->addAction(QString("传输历史"));
+    connect(toolbar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbar_actiontriggered(QAction*)));    //处理工具栏点击
+    ui->verticalLayout_4->addWidget(toolbar);
+
     udpbro = NULL;  //udp广播
     socketinit();
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
@@ -321,4 +332,15 @@ void server::tablewidget_clicked(int row, int colum)
         }
     }
 
+}
+
+void server::toolbar_actiontriggered(QAction *tem)
+{
+    qDebug()<<tem->text();
+    if(tem->text() == QString("主页")){
+        QObjectList tem1;
+        tem1 = ui->widget_2->children();
+
+
+    }
 }

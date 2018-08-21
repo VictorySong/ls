@@ -37,7 +37,26 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu123">
+    <property name="title">
+     <string>123</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuerwqrqwr">
+    <property name="title">
+     <string>erwqrqwr</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action21321312"/>
+   </widget>
+   <addaction name="menu123"/>
+   <addaction name="menuerwqrqwr"/>
   </widget>
+  <action name="action21321312">
+   <property name="text">
+    <string>21321312</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
