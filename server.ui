@@ -29,7 +29,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QGraphicsView" name="graphicsView"/>
+        <widget class="QGraphicsView" name="graphicsView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -42,13 +49,13 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>650</width>
+        <width>700</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>650</width>
+        <width>700</width>
         <height>16777215</height>
        </size>
       </property>
@@ -176,13 +183,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>632</width>
+           <width>700</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>632</width>
+           <width>700</width>
            <height>16777215</height>
           </size>
          </property>

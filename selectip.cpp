@@ -100,7 +100,7 @@ void selectip::on_pushButton_3_clicked()
         connect(ser,SIGNAL(destroyed(QObject*)),this,SLOT(newser(QObject*)));  //服务器窗口摧毁后进行
     }
     if(ser->isHidden())
-        ser->show();
+        ser->showMaximized();
 }
 
 void selectip::on_pushButton_2_clicked()

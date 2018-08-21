@@ -1,7 +1,7 @@
 #ifndef HEADRECTITEM_H
 #define HEADRECTITEM_H
 
-#include <QGraphicsItem>;
+#include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QPainter>
 #include <QRect>
