@@ -12,6 +12,7 @@ client::client(QWidget *parent ) :
 
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
+    ui->fileprogressBar->hide();
 
     socketinit();
 }
@@ -203,4 +204,10 @@ void client::verifyresult(QString tem)
         ui->pushButton->setText("连接成功");
     else
         ui->pushButton->setText(tem);
+}
+
+void client::on_pushButton_5_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this);
+    qDebug()<<fileName;
 }

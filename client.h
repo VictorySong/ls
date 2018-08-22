@@ -6,6 +6,7 @@
 #include <winpcap.h>
 #include <tcpserver.h>
 #include <tcpsocket.h>
+#include <QFileDialog>
 
 namespace Ui {
 class client;
@@ -39,6 +40,7 @@ private slots:
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
     void getid(QString);                    //更新窗口id
+    void on_pushButton_5_clicked();
 };
 
 #endif // CLIENT_H

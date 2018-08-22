@@ -20,8 +20,11 @@ server::server(QWidget *parent) :
     toolbar->addAction(QString("传输中"));
     toolbar->addAction(QString("传输历史"));
     connect(toolbar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbar_actiontriggered(QAction*)));    //处理工具栏点击
-    ui->verticalLayout_4->addWidget(toolbar);
+    ui->tool->layout()->addWidget(toolbar);
+    ui->tool->layout()->setAlignment(Qt::AlignTop);
 
+    ui->transfering->hide();
+    ui->verticalLayout_3->setAlignment(Qt::AlignTop);
     udpbro = NULL;  //udp广播
     socketinit();
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
@@ -336,11 +339,24 @@ void server::tablewidget_clicked(int row, int colum)
 
 void server::toolbar_actiontriggered(QAction *tem)
 {
-    qDebug()<<tem->text();
+    //工具栏按钮点击
     if(tem->text() == QString("主页")){
-        QObjectList tem1;
-        tem1 = ui->widget_2->children();
+        ui->homepage->show();
+    }else{
+        ui->homepage->hide();
+    }
 
-
+    if(tem->text() == QString("传输中")){
+        QHBoxLayout *tem = new QHBoxLayout(ui->transfering);
+        tem->setSpacing(6);
+        QLabel *tem1 = new QLabel(QString("文件"),ui->transfering);
+        QProgressBar *tem2 = new QProgressBar(ui->transfering);
+        tem2->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+        tem->addWidget(tem1);
+        tem->addWidget(tem2);
+        ui->transfering->layout()->addItem(tem);
+        ui->transfering->show();
+    }else{
+        ui->transfering->hide();
     }
 }
