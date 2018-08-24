@@ -58,10 +58,9 @@ void server::on_pushButton_2_clicked()
 
 void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString id)
 {
-    qDebug()<<"有新数据";
+    qDebug()<<"有新数据updatetabelwidget";
     QJsonParseError error;
     QJsonDocument jsondoc = QJsonDocument::fromJson(mess,&error);       //转化成json对象
-    qDebug()<<error.errorString();
     QVariantMap result = jsondoc.toVariant().toMap();
     if(result["type"].toString() == QString("location")){
         QString ip = clientsocket->peerAddress().toString();
@@ -212,8 +211,6 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
     tem1->setTextAlignment(Qt::AlignCenter);
     ui->tableWidget->setItem(row,6,tem1);
 
-
-
     //添加卫星实时位置
     QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
     while(i.hasNext()){
@@ -227,7 +224,6 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
             //tem.color = Qt::green;
             qDebug() << "tem.color was set" << endl;
             locationlist.insert(i.key(),tem);
-            qDebug()<<locationlist.value(i.key()).x;
             break;
         }
     }
@@ -246,7 +242,7 @@ void server::disconnected(tcpsocket *clientsocket)
             break;
         }
     }
-//    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错
+//    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错(如何释放这个连接有待商榷)
 }
 
 
@@ -360,3 +356,4 @@ void server::toolbar_actiontriggered(QAction *tem)
         ui->transfering->hide();
     }
 }
+

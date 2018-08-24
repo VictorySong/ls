@@ -25,6 +25,7 @@ private:
     Ui::client *ui;
     QUdpSocket *udpServer;              //udp监听
     tcpsocket *tcpsender;              //tcp发送
+    tcpsocket *tcpsender_file;     //tcp文件发送
 
     void socketinit();                  //初始化socket
 public slots:
@@ -33,6 +34,7 @@ public slots:
     void newdata(QByteArray,tcpsocket*);        //有新数据到达时
     void tcpdisconnect();               //tcp连接断开时
     void verifyresult(QString);             //验证结果
+    void verifyresult_file(QString);        //文件客户端连接验证结果
 
 private slots:
     void on_pushButton_clicked();

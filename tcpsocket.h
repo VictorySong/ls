@@ -7,7 +7,7 @@ class tcpsocket : public QTcpSocket
 {
     Q_OBJECT
 public:
-    tcpsocket(QObject *parent=0 ,int type = 0);     //type 决定tcpsocket类型 是用于客户端还是服务端 还是普通 默认普通
+    tcpsocket(QObject *parent=0 ,int type = 0, QString s_id=QString(""));     //type 决定tcpsocket类型 是用于客户端还是服务端 还是普通 默认普通
 signals:
     void updateClients(QByteArray,tcpsocket *);
     void disconnected(tcpsocket *);
@@ -20,11 +20,12 @@ protected slots:
     void dataReceived();
     void slotDisconnected();
     void verifyidclient();                //验证身份 客户端
+    void verifyidclient_file();                //验证身份 文件客户端
     void waitverification();              //等待服务器允许接入的响应
 public slots:
     void verifyidserver();                //验证身份 服务端
-
-
+private:
+    QString id; //卫星id
 };
 
 #endif // TCPSOCKET_H

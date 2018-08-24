@@ -8,11 +8,10 @@ client::client(QWidget *parent ) :
     QWidget(parent),
     ui(new Ui::client)
 {
-
-
     setAttribute(Qt::WA_DeleteOnClose);             //关闭窗口后调用析构函数
     ui->setupUi(this);
     ui->fileprogressBar->hide();
+    ui->pushButton_5->setEnabled(false);
 
     socketinit();
 }
@@ -36,18 +35,20 @@ void client::udpget()
        //将数据报内容显示出来
        QJsonParseError error;
        QJsonDocument jsondoc = QJsonDocument::fromJson(datagram,&error);
-       QVariantMap result = jsondoc.toVariant().toMap();
-       ui->serverip->setText(result["ip"].toString());
-       ui->serverport->setText(result["port"].toString());
+       if(error.error == 0){
+           QVariantMap result = jsondoc.toVariant().toMap();
+           ui->serverip->setText(result["ip"].toString());
+           ui->serverport->setText(result["port"].toString());
 
-       //进行tcp连接
-       tcpsender->abort(); //取消已有的连接
-       ui->pushButton->setText(QString("连接中"));
-       //连接到主机，这里从界面获取主机地址和端口号
-       tcpsender->connectToHost(QHostAddress(ui->serverip->text()),ui->serverport->text().toInt());
+           //进行tcp连接
+           tcpsender->abort(); //取消已有的连接
+           ui->pushButton->setText(QString("连接中"));
+           //连接到主机，这里从界面获取主机地址和端口号
+           tcpsender->connectToHost(QHostAddress(ui->serverip->text()),ui->serverport->text().toInt());
 
-       //关闭udpserver
-       udpServer->close();
+           //关闭udpserver
+           udpServer->close();
+       }
     }
 }
 
@@ -63,7 +64,7 @@ void client::on_pushButton_clicked()
 
 void client::on_pushButton_2_clicked()
 {
-    tcpsender->close(); //取消已有的连接
+    tcpsender->abort(); //取消已有的连接
 
     ui->pushButton->setText(QString("发起tcp连接"));
 }
@@ -173,7 +174,7 @@ void client::socketinit()
 {
     udpServer = new QUdpSocket(this);                   //实例化udpsocket对象
     tcpsender = new tcpsocket(this,1);
-
+    tcpsender_file = NULL;
     if(!udpServer->bind(QHostAddress(ip),ui->udpport->text().toInt(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         qDebug()<<"udp接受端绑定端口出错";
 
@@ -198,10 +199,19 @@ void client::getid(QString id)
 
 void client::verifyresult(QString tem)
 {
-    if(tem == "fail")
+    if(tem == "abort")
         tcpsender->abort();
-    else if(tem == "success")
+    else if(tem == "success"){
         ui->pushButton->setText("连接成功");
+        //连接成功后发起文件客户端的连接
+        if(tcpsender_file == NULL){
+            tcpsender_file = new tcpsocket(this,3,ui->id->text());
+            connect(tcpsender_file,SIGNAL(sendclientverifyresult(QString)),this,SLOT(verifyresult_file(QString)));
+        }
+        //连接到主机，这里从界面获取主机地址和端口号
+        tcpsender_file->connectToHost(QHostAddress(ui->serverip->text()),ui->serverport->text().toInt());
+    }else if(tem == "fail")
+        QMessageBox::information(0, QString("验证出错！"), QString("id或密码错误"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     else
         ui->pushButton->setText(tem);
 }
@@ -210,4 +220,15 @@ void client::on_pushButton_5_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
     qDebug()<<fileName;
+}
+
+void client::verifyresult_file(QString tem)
+{
+    if(tem == "success"){
+        ui->pushButton_5->setText(QString("文件传输连接完成，点击发送"));
+        ui->pushButton_5->setEnabled(true);
+    }else if(tem == "fail"){
+        ui->pushButton_5->setText(QString("文件传输连接失败"));
+        ui->pushButton_5->setEnabled(false);
+    }
 }
