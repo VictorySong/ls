@@ -8,6 +8,7 @@
 #include <udpbroad.h>
 #include <instruction.h>
 #include <QToolBar>
+#include <QProgressBar>
 
 #include <QtGui>
 #include <QGraphicsView>
@@ -33,7 +34,7 @@ public:
     ~server();
     void wificonnected();                       //wifi连接成功后
     static QHash<QString,inf> locationlist;            //记录卫星最新位置
-
+    QHash<QString,QProgressBar *> filelist;            //记录已传输的文件
 
 private slots:
     void on_pushButton_clicked();
@@ -65,6 +66,8 @@ public slots:
     void updatenewclient(QString,tcpsocket *);                      //有新连接时更新界面显示
     void disconnected(tcpsocket *);                         //有连接断开时更新视
     void toolbar_actiontriggered(QAction *);       //工具栏action被点击
+    void updatefileview(qint64,qint64,QString,tcpsocket*,QString);  //有文件传入时更新界面
+    void updatefileview_new(qint64,qint64,QString,tcpsocket*,QString);  //有新文件传入时更新界面
 
 };
 

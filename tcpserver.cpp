@@ -5,7 +5,11 @@
 tcpserver::tcpserver(QObject *parent):
     QTcpServer(parent)
 {
-
+    //创建存储文件的文件夹
+    filefolder=QString("C:/lsfile");
+    QDir dir(filefolder);
+    if(!dir.exists())
+        dir.mkpath(filefolder);//创建多级目录
 }
 
 void tcpserver::incomingConnection(int socketDescriptor)
@@ -217,12 +221,21 @@ void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
             if(tcpClientSocketList.contains(result["id"].toString())){
                 if(!tcpFileSocketList.contains(result["id"].toString())){
                     disconnect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(verifyidserver()));
-                    connect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(dataReceived()));
+                    connect(clientsocket,SIGNAL(readyRead()),clientsocket,SLOT(dataReceived_file()));
                     //连接TcpClientSocket的updateClients（）信号
-                    connect(clientsocket,SIGNAL(updateClients(QByteArray,tcpsocket *)),this,SLOT(updateClients_file(QByteArray,tcpsocket *)));
+                    connect(clientsocket,SIGNAL(updateClients_file(qint64,qint64,QString,tcpsocket *)),this,SLOT(updateClients_file(qint64,qint64,QString,tcpsocket *)));
                     //连接TcpClientSocket的disconnected（）信号
                     connect(clientsocket,SIGNAL(disconnected(tcpsocket *)),this,SLOT(slotDisconnected(tcpsocket *)));
+                    //连接新传入文件信号
+                    connect(clientsocket,SIGNAL(updateClients_newfile(qint64,qint64,QString,tcpsocket*)),this,SLOT(updateClients_newfile(qint64,qint64,QString,tcpsocket*)));
                     tcpFileSocketList.insert(result["id"].toString(),clientsocket);
+                    //创建文件夹
+                    QString folder = filefolder+QString("/%1").arg(result["id"].toString());
+                    QDir dir(folder);
+                    if(!dir.exists())
+                        dir.mkpath(folder);//创建多级目录
+                    clientsocket->filefolder = folder;
+
                     //回复同意连接
                     QByteArray datagram = "allow";
                     if(clientsocket->isWritable())
@@ -255,7 +268,7 @@ void tcpserver::newphone(tcpsocket *clientsocket)
             this,SLOT(slotDisconnected(tcpsocket *)));
 }
 
-void tcpserver::updateClients_file(QByteArray mess, tcpsocket *clientsocket)
+void tcpserver::updateClients_file(qint64 bytesreceived,qint64 totalbytes,QString filename,tcpsocket *clientsocket)
 {
     //有文件数据传入时
     QString ip = clientsocket->peerAddress().toString();
@@ -264,7 +277,20 @@ void tcpserver::updateClients_file(QByteArray mess, tcpsocket *clientsocket)
     while(h.hasNext()){
         h.next();
         if(h.value()->peerAddress().toString() == ip && h.value()->peerPort() == port){
-            emit updateServer_file(mess,clientsocket,h.key());
+            emit updateServer_file(bytesreceived,totalbytes,filename,clientsocket,h.key());
+            break;
+        }
+    }
+}
+void tcpserver::updateClients_newfile(qint64 bytesreceived, qint64 totalbytes, QString filename, tcpsocket *clientsocket)
+{
+    QString ip = clientsocket->peerAddress().toString();
+    quint16 port = clientsocket->peerPort();
+    QHashIterator <QString,tcpsocket *> h(tcpFileSocketList);
+    while(h.hasNext()){
+        h.next();
+        if(h.value()->peerAddress().toString() == ip && h.value()->peerPort() == port){
+            emit updateServer_newfile(bytesreceived,totalbytes,filename,clientsocket,h.key());
             break;
         }
     }
