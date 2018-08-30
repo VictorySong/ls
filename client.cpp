@@ -225,7 +225,7 @@ void client::verifyresult(QString tem)
 void client::on_pushButton_5_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
-    if(!fileName.isEmpty())
+    if(!fileName.isEmpty()){
         ui->fileprogressBar->show();
         ui->pushButton_5->hide();
         totalBytes = 0;
@@ -255,6 +255,7 @@ void client::on_pushButton_5_clicked()
         bytesToWrite = totalBytes - tcpsender_file->write(outBlock);
         //清空发送缓冲区
         outBlock.resize(0);
+    }
 }
 
 void client::verifyresult_file(QString tem)

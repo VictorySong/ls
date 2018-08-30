@@ -6,6 +6,8 @@
 
 QT       += core gui
 QT       += network
+QT       += multimedia
+QT       += multimediawidgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #-------------------------------------------------
@@ -48,7 +50,8 @@ SOURCES += \
     verification.cpp \
     searchwifi.cpp \
     headrectitem.cpp \
-    instruction.cpp
+    instruction.cpp \
+    cameraview.cpp
 
     instruction.cpp
 
@@ -68,7 +71,8 @@ HEADERS += \
     wlan.h \
     searchwifi.h \
     headrectitem.h \
-    instruction.h
+    instruction.h \
+    cameraview.h
 
     instruction.h
 
@@ -83,7 +87,8 @@ FORMS += \
     client.ui \
     verification.ui \
     instruction.ui \
-    instruction.ui
+    instruction.ui \
+    cameraview.ui
 
 OTHER_FILES += \
             Packet.lib\

@@ -9,6 +9,7 @@
 #include <instruction.h>
 #include <QToolBar>
 #include <QProgressBar>
+#include <cameraview.h>
 
 #include <QtGui>
 #include <QGraphicsView>
@@ -37,9 +38,6 @@ public:
     QHash<QString,QProgressBar *> filelist;            //记录已传输的文件
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
     void tablewidget_clicked(int,int);
 
 private:
@@ -47,9 +45,10 @@ private:
     QUdpSocket *udpsender;              //udp发送
     tcpserver *tcpServer;              //tcp监听
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
+    cameraview *cview;
+    QCamera *camera;
 
     QPixmap pix;                            //图层
-
     QPoint lastpoint;                   //起点
     QPoint endpoint;                    //终点3
     QGraphicsScene scene;               //用于绘制轨迹

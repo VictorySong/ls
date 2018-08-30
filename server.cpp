@@ -46,16 +46,6 @@ server::~server()
     delete udpbro;
 }
 
-void server::on_pushButton_clicked()
-{
-
-}
-
-void server::on_pushButton_2_clicked()
-{
-
-}
-
 void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString id)
 {
     qDebug()<<"有新数据updatetabelwidget";
@@ -347,35 +337,31 @@ void server::toolbar_actiontriggered(QAction *tem)
     }
 
     if(tem->text() == QString("传输中")){
-        QString name = "文件";
-        QHBoxLayout *tem = new QHBoxLayout();
-        tem->setSpacing(6);
-        QLabel *tem1 = new QLabel(name,this);
-        QProgressBar *tem2 = new QProgressBar(this);
-    //    tem2->setValue(bytesreveived);
-    //    tem2->setMaximum(totalbytes);
-    //    if(!this->filelist.contains(name)){
-    //        this->filelist.insert(name,tem2);
-    //    }else{
-    //        this->filelist.value(name,tem2);
-    //    }
-        tem2->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-        tem->addWidget(tem1);
-        tem->addWidget(tem2);
-        ui->transfering->layout()->addItem(tem);
         ui->transfering->show();
     }else{
         ui->transfering->hide();
+    }
+
+    if(tem->text() == QString("传输文件")){
+//        cview = new cameraview();
+//        camera = new QCamera(this);
+//        QCameraViewfinder *tem = new QCameraViewfinder(cview);
+//        camera->setCaptureMode(QCamera::CaptureStillImage);
+//        camera->setCaptureMode(QCamera::CaptureMode::CaptureViewfinder);
+//        camera->setViewfinder(tem);
+//        cview->show();
+//        camera->start();
+
     }
 }
 
 void server::updatefileview(qint64 bytesreveived, qint64 totalbytes, QString filename, tcpsocket *clientsocket, QString id)
 {
-//    QString name = id+QString("/")+filename;
-//    if(this->filelist.contains(name)){
-//        QProgressBar *tem = this->filelist.value(name);
-//        tem->setValue(bytesreveived);
-//    }
+    QString name = id+QString("/")+filename;
+    if(this->filelist.contains(name)){
+        QProgressBar *tem = this->filelist.value(name);
+        tem->setValue(bytesreveived);
+    }
 }
 
 void server::updatefileview_new(qint64 bytesreveived, qint64 totalbytes, QString filename, tcpsocket *clientsocket, QString id)
@@ -384,18 +370,18 @@ void server::updatefileview_new(qint64 bytesreveived, qint64 totalbytes, QString
     QString name = id+QString("/")+filename;
     QHBoxLayout *tem = new QHBoxLayout();
     tem->setSpacing(6);
-    QLabel *tem1 = new QLabel(name,this);
-    QProgressBar *tem2 = new QProgressBar(this);
-//    tem2->setValue(bytesreveived);
-//    tem2->setMaximum(totalbytes);
-//    if(!this->filelist.contains(name)){
-//        this->filelist.insert(name,tem2);
-//    }else{
-//        this->filelist.value(name,tem2);
-//    }
+    QLabel *tem1 = new QLabel(name,ui->transfering);
+    QProgressBar *tem2 = new QProgressBar(ui->transfering);
+    tem2->setValue(bytesreveived);
+    tem2->setMaximum(totalbytes);
+    if(!this->filelist.contains(name)){
+        this->filelist.insert(name,tem2);
+    }else{
+        this->filelist.value(name,tem2);
+    }
     tem2->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     tem->addWidget(tem1);
     tem->addWidget(tem2);
-    ui->transfering->layout()->addItem(tem);
-    ui->transfering->layout()->update();
+    QVBoxLayout *translayout =(QVBoxLayout *) ui->transfering->layout();
+    translayout->addLayout(tem);
 }
