@@ -10,6 +10,7 @@
 #include <QToolBar>
 #include <QProgressBar>
 #include <cameraview.h>
+#include <httpserver.h>
 
 #include <QtGui>
 #include <QGraphicsView>
@@ -47,6 +48,7 @@ private:
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
     cameraview *cview;
     QCamera *camera;
+    httpserver *http_server; //简单的http服务器用来作为apk下载源
 
     QPixmap pix;                            //图层
     QPoint lastpoint;                   //起点
@@ -67,7 +69,6 @@ public slots:
     void toolbar_actiontriggered(QAction *);       //工具栏action被点击
     void updatefileview(qint64,qint64,QString,tcpsocket*,QString);  //有文件传入时更新界面
     void updatefileview_new(qint64,qint64,QString,tcpsocket*,QString);  //有新文件传入时更新界面
-
 };
 
 #endif // SERVER_H

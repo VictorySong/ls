@@ -13,7 +13,7 @@ tcpsocket::tcpsocket(QObject *parent ,int type,QString s_id):
         //等待服务器允许接入的回复
         connect(this,SIGNAL(readyRead()),this,SLOT(waitverification()));
         break;
-    case 2:                     //服务端
+    case 2:                     //服务端 传送文件
     {
         totalBytes = 0;
         bytesReceived = 0;
@@ -31,7 +31,7 @@ tcpsocket::tcpsocket(QObject *parent ,int type,QString s_id):
         //等待服务器允许接入的回复
         connect(this,SIGNAL(readyRead()),this,SLOT(waitverification()));
         break;
-    default:
+    default:                //服务端 接收数据
         connect(this,SIGNAL(readyRead()),this,SLOT(dataReceived()));
         //disconnected()信号在断开连接时发出
         connect(this,SIGNAL(disconnected()),this,SLOT(slotDisconnected()));
@@ -110,6 +110,10 @@ void tcpsocket::verifyidclient_file()
     QByteArray datagram = document.toJson(QJsonDocument::Compact);  //将信息转化为json格式
     if(this->isWritable())
         this->write(datagram);
+    else{
+        this->waitForBytesWritten();
+        this->write(datagram);
+    }
 }
 
 void tcpsocket::dataReceived_file()

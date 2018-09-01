@@ -25,8 +25,7 @@ server::server(QWidget *parent) :
 
     ui->transfering->hide();
     ui->verticalLayout_3->setAlignment(Qt::AlignTop);
-    udpbro = NULL;  //udp广播
-    socketinit();
+
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
     connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(tablewidget_clicked(int,int)));
 
@@ -34,6 +33,12 @@ server::server(QWidget *parent) :
     lastpoint.setY(0);
     endpoint.setX(0);
     endpoint.setY(0);
+
+    udpbro = NULL;  //udp广播
+    socketinit();   //初始化udp广播、tcp监听
+    //初始化http_server
+    http_server = new httpserver(this);
+    http_server->listen(QHostAddress::Any,80);
 
 }
 
@@ -351,6 +356,7 @@ void server::toolbar_actiontriggered(QAction *tem)
 //        camera->setViewfinder(tem);
 //        cview->show();
 //        camera->start();
+//        qDebug()<<camera->availableDevices();
 
     }
 }
@@ -385,3 +391,5 @@ void server::updatefileview_new(qint64 bytesreveived, qint64 totalbytes, QString
     QVBoxLayout *translayout =(QVBoxLayout *) ui->transfering->layout();
     translayout->addLayout(tem);
 }
+
+

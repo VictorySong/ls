@@ -133,7 +133,7 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
             break;
         }
     }
-    return;
+    clientsocket->deleteLater();    //释放内存
 }
 
 void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
@@ -163,6 +163,7 @@ void tcpserver::newverifiedclient(QString id, tcpsocket *clientsocket)
 void tcpserver::releasetcpsocket(tcpsocket *clientsocket)
 {
     clientsocket->close();
+    clientsocket->deleteLater();    //释放内存
 }
 
 void tcpserver::verifyserver(QByteArray buff,tcpsocket *clientsocket)
