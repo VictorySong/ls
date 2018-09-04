@@ -8,6 +8,7 @@
 #include <QRectF>
 #include <QtGui>
 #include "tcpsocket.h"
+#include <QHash>
 
 
 class headRectItem : public QGraphicsRectItem

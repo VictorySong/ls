@@ -1,6 +1,8 @@
 #include "server.h"
 #include "ui_server.h"
 #include <QGraphicsView>
+#include <QLibrary>
+#include <qrencode/qrencode.h>
 
 extern QString ip;                 //ip
 extern QString broadcast;                  //广播地址
@@ -19,11 +21,13 @@ server::server(QWidget *parent) :
     toolbar->addAction(QString("传输文件"));
     toolbar->addAction(QString("传输中"));
     toolbar->addAction(QString("传输历史"));
+    toolbar->addAction(QString("二维码"));
     connect(toolbar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbar_actiontriggered(QAction*)));    //处理工具栏点击
     ui->tool->layout()->addWidget(toolbar);
     ui->tool->layout()->setAlignment(Qt::AlignTop);
 
     ui->transfering->hide();
+    ui->qrcode->hide();
     ui->verticalLayout_3->setAlignment(Qt::AlignTop);
 
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);   //表格禁止编辑
@@ -358,6 +362,41 @@ void server::toolbar_actiontriggered(QAction *tem)
 //        camera->start();
 //        qDebug()<<camera->availableDevices();
 
+    }
+    if(tem->text() == QString("二维码")){
+        QImage ret;
+        int bulk = 8;
+        QString str = QString("http://")+ip;
+        QRcode* qr = QRcode_encodeString(str.toUtf8(), 1, QR_ECLEVEL_Q, QR_MODE_8, 0);
+        if ( qr != nullptr )
+        {
+            int allBulk = (qr->width) * bulk;
+            ret = QImage(allBulk, allBulk, QImage::Format_Mono);
+            QPainter painter(&ret);
+            QColor fg("black");
+            QColor bg("white");
+            painter.setBrush(bg);
+            painter.setPen(Qt::NoPen);
+            painter.drawRect(0, 0, allBulk, allBulk);
+
+            painter.setBrush(fg);
+            for( int y=0; y<qr->width; y++ )
+            {
+                for( int x=0; x<qr->width; x++ )
+                {
+                    if ( qr->data[y*qr->width+x] & 1 )
+                    {
+                        QRectF r(x*bulk, y*bulk, bulk, bulk);
+                        painter.drawRects(&r, 1);
+                    }
+                }
+            }
+            QRcode_free(qr);
+        }
+        ui->qrcode_l->setPixmap(QPixmap::fromImage(ret));
+        ui->qrcode->show();
+    }else{
+        ui->qrcode->hide();
     }
 }
 

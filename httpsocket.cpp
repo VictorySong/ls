@@ -13,19 +13,21 @@ void httpsocket::httpreadyread()
     buff = this->read(this->bytesAvailable());
     qDebug()<<buff;
 
-    QString http;
+    QString http,response;
     QByteArray headData, data;
-    QFile file("E:/document/luomai/build-ls-Desktop_Qt_5_6_3_MinGW_32bit-Release/release/ls.apk");
+    QFile file("C:/lsfile/ls.apk");
     if(!file.open(QIODevice::ReadOnly))
     {
         qDebug("http file open failed!");
-        http = "HTTP/1.1 500 Internal Server Error\r\n";
+        response = QString("\"C:/lsfile/ls.apk\"文件不存在,请确认将软件复制到该路径");
+        data.append(response);
+        http = "HTTP/1.1 200 OK\r\n";
         http += "Server: nginx\r\n";
-        http += "Connection: close\r\n";
+        http += "Content-Type: text/html;charset=utf-8\r\n";
+        http += QString("Content-Length: %1\r\n\r\n").arg(QString::number(data.size()));
         headData.append(http);
         this->write(headData);
-        this->close();
-        this->deleteLater();
+        this->write(data);
         return;
     }
     http = "HTTP/1.1 200 OK\r\n";

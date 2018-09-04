@@ -1,7 +1,6 @@
 #ifndef TCPSOCKET_H
 #define TCPSOCKET_H
-
-#include <stable.h>
+#include <QtNetwork>
 #include <verification.h>
 class tcpsocket : public QTcpSocket
 {

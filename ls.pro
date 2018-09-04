@@ -18,9 +18,11 @@ LIBS += -L../ls/  \
         -lwpcap  \
         -lWS2_32  \
         -lwlan
+LIBS += -L../ls/qrencode \
+        -lqrencode
 #-------------------------------------------------
 #编译预处理文件 可以增加编译速度
-PRECOMPILED_HEADER = stable.h
+#PRECOMPILED_HEADER = stable.h
 #-------------------------------------------------
 TARGET = ls
 TEMPLATE = app
@@ -74,7 +76,9 @@ HEADERS += \
     instruction.h \
     cameraview.h \
     httpserver.h \
-    httpsocket.h
+    httpsocket.h \
+    qrencode/qrencode.h \
+    tem.h
 
     instruction.h
 
