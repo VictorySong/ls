@@ -94,8 +94,9 @@ void client::on_pushButton_3_clicked()
 
     qDebug()<<datagram;
 
-    if(tcpsender->isWritable())
-        tcpsender->write(datagram);
+    if(!tcpsender->isWritable())
+        tcpsender->waitForBytesWritten(1000);
+    tcpsender->write(datagram);
 }
 
 void client::newdata(QByteArray mess, tcpsocket *clientsocket)
@@ -246,6 +247,7 @@ void client::on_pushButton_5_clicked()
         sendOut.setVersion(QDataStream::Qt_4_6);
         //依次写入总大小信息空间，文件名大小信息空间，文件名
         sendOut << qint64(0) << qint64(0) << currentFileName;
+
         //这里的总大小是文件名大小等信息和实际文件大小的总和
         totalBytes += outBlock.size();
         sendOut.device()->seek(0);

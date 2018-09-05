@@ -285,14 +285,30 @@ void tcpserver::updateClients_file(qint64 bytesreceived,qint64 totalbytes,QStrin
 }
 void tcpserver::updateClients_newfile(qint64 bytesreceived, qint64 totalbytes, QString filename, tcpsocket *clientsocket)
 {
+    //通知手机端有文件传入
+    QJsonObject json;
+    json.insert("type","newfile"); //信息类型为位置信息
+    json.insert("filename",filename);
+    json.insert("size",totalbytes);
     QString ip = clientsocket->peerAddress().toString();
     quint16 port = clientsocket->peerPort();
     QHashIterator <QString,tcpsocket *> h(tcpFileSocketList);
     while(h.hasNext()){
         h.next();
         if(h.value()->peerAddress().toString() == ip && h.value()->peerPort() == port){
+            json.insert("id",h.key());  //插入id
+            //告诉server.cpp 有新的文件传入
             emit updateServer_newfile(bytesreceived,totalbytes,filename,clientsocket,h.key());
             break;
         }
+    }
+
+    QJsonDocument document;
+    document.setObject(json);
+    QByteArray datagram = document.toJson(QJsonDocument::Compact);  //将信息转化为json格式
+    QMutableListIterator<tcpsocket*> j(tcpphonesocket);
+    while (j.hasNext()) {
+        j.next();
+        j.value()->write(datagram);
     }
 }
