@@ -19,7 +19,7 @@ signals:
     void updateServer_file(qint64,qint64,QString,tcpsocket *,QString);
     void updateServer_newfile(qint64,qint64,QString,tcpsocket *,QString);   //有新文件传入
     void newclientsocket(QString,tcpsocket *);
-    void disconnected(tcpsocket *);
+    void disconnected(tcpsocket *,QString);
 public slots:
     void updateClients(QByteArray,tcpsocket *);
     void updateClients_file(qint64,qint64,QString,tcpsocket *);

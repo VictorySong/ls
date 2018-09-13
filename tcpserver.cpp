@@ -93,7 +93,7 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
             if(tcpFileSocketList.contains(i.key()))
                 tcpFileSocketList.value(i.key())->abort();
             tcpClientSocketList.remove(i.key());
-            emit disconnected(clientsocket);
+            emit disconnected(clientsocket,i.key());
 
             //通知手机端某卫星断开
             QMutableListIterator<tcpsocket*> k(tcpphonesocket);

@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">border:1px solid red;</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -281,6 +281,9 @@
             </property>
            </column>
           </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="s_view" native="true"/>
          </item>
         </layout>
        </widget>

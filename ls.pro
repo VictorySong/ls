@@ -22,7 +22,7 @@ LIBS += -L../ls/qrencode \
         -lqrencode
 #-------------------------------------------------
 #编译预处理文件 可以增加编译速度
-#PRECOMPILED_HEADER = stable.h
+PRECOMPILED_HEADER = stable.h
 #-------------------------------------------------
 TARGET = ls
 TEMPLATE = app
@@ -53,7 +53,8 @@ SOURCES += \
     instruction.cpp \
     cameraview.cpp \
     httpserver.cpp \
-    httpsocket.cpp
+    httpsocket.cpp \
+    sinfview.cpp
 
     instruction.cpp
 
@@ -78,7 +79,8 @@ HEADERS += \
     httpserver.h \
     httpsocket.h \
     qrencode/qrencode.h \
-    tem.h
+    tem.h \
+    sinfview.h
 
     instruction.h
 
@@ -94,7 +96,8 @@ FORMS += \
     verification.ui \
     instruction.ui \
     instruction.ui \
-    cameraview.ui
+    cameraview.ui \
+    sinfview.ui
 
 OTHER_FILES += \
             Packet.lib\

@@ -26,6 +26,7 @@
 #include <QCamera>
 #include <QCameraViewfinder>
 #include <QCameraInfo>
+#include "sinfview.h"
 
 #ifndef IPTOSBUFFERS
 #define IPTOSBUFFERS    12
@@ -90,6 +91,7 @@ struct inf{
     QGraphicsLineItem *lineItemPointer[100];
     //lineItemPointer是一个指针数组，用于记录客户端每一个的轨迹段数据
     headRectItem *headRect;
+    sinfview *sview_widget; //显示卫星信息的widget
 };
 
 

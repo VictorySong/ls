@@ -1,7 +1,6 @@
 #include "server.h"
 #include "ui_server.h"
 #include <QGraphicsView>
-#include <QLibrary>
 #include <qrencode/qrencode.h>
 
 extern QString ip;                 //ip
@@ -84,16 +83,16 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
         QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
         while(i.hasNext()){
             i.next();
-            if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
-                    && i.value()->peerPort() == clientsocket->peerPort()){
+            if(i.key() == id){
                 inf pretem;         //前一个位置结构
                 pretem = locationlist.value(i.key());
-
                 inf tem;            //现在的位置结构
+                tem = pretem;
                 tem.x = result["x"].toFloat();
                 tem.y = result["y"].toFloat();
-                tem.color = pretem.color;
-
+                tem.sview_widget->x = tem.x;
+                tem.sview_widget->y = tem.y;
+                tem.sview_widget->inf_update();
                 if(pretem.x == -1)//发送的数据点不足两个的情况
                 {
                     tem.lineItemNum=0;
@@ -133,19 +132,12 @@ void server::updatetabelwidget(QByteArray mess, tcpsocket * clientsocket,QString
                     brush.setStyle(Qt::SolidPattern);
                     brush.setColor(pretem.color);
 
-                    //从pretem中读取轨迹段指针数据到tem
-                    for(int k=0;k<pretem.lineItemNum;k++)
-                    {
-                        tem.lineItemPointer[k]=pretem.lineItemPointer[k];
-                    }
-
                     //读取轨迹数量
                     lineItemNum=pretem.lineItemNum;
                     //读取轨迹段数据指针
                     lineItemPointer=tem.lineItemPointer;
 
                     //从这里开始正式画图
-
                     //在场景scene中添加新一段轨迹LineItem，同时将lineitem的数量+1，并用指针lineItemPointer进行记录
                     lineItemPointer[lineItemNum++] = scene.addLine(lastpoint.x(),lastpoint.y(),endpoint.x(),endpoint.y());
 
@@ -211,25 +203,21 @@ void server::updatenewclient(QString id,tcpsocket * clientsocket)
     ui->tableWidget->setItem(row,6,tem1);
 
     //添加卫星实时位置
-    QHashIterator <QString,tcpsocket *> i(this->tcpServer->tcpClientSocketList);
-    while(i.hasNext()){
-        i.next();
-        if(i.value()->peerAddress().toString() == clientsocket->peerAddress().toString()
-                && i.value()->peerPort() == clientsocket->peerPort()){
-            inf tem;
-            tem.x = -1;
-            tem.y = -1;
-            tem.color = QColor(qrand() % 256, qrand() %256, qrand() % 256);//设置颜色，用于绘制轨迹
-            //tem.color = Qt::green;
-            qDebug() << "tem.color was set" << endl;
-            locationlist.insert(i.key(),tem);
-            break;
-        }
+    if(this->tcpServer->tcpClientSocketList.contains(id)){
+        inf tem;
+        tem.x = -1;
+        tem.y = -1;
+        tem.color = QColor(qrand() % 256, qrand() %256, qrand() % 256);//设置颜色，用于绘制轨迹
+        tem.sview_widget = new sinfview(id,clientsocket->peerAddress().toString()+QString(":%1").arg(clientsocket->peerPort()),tem.x,tem.y);
+
+        //tem.color = Qt::green;
+        qDebug() << "tem.color was set" << endl;
+        locationlist.insert(id,tem);
+        qDebug()<<"卫星id列表"<<locationlist.keys();
     }
-    qDebug()<<locationlist.keys();
 }
 
-void server::disconnected(tcpsocket *clientsocket)
+void server::disconnected(tcpsocket *clientsocket,QString id)
 {
     int row = ui->tableWidget->rowCount();
     QString ip = clientsocket->peerAddress().toString();
@@ -241,6 +229,10 @@ void server::disconnected(tcpsocket *clientsocket)
             break;
         }
     }
+    //删除列表中对应项
+    inf tem = locationlist.value(id);
+    tem.sview_widget->deleteLater();
+    locationlist.remove(id);
 //    free(clientsocket);                    //释放这个不用的连接的内存  此处要用free 不能用delete 会出错(如何释放这个连接有待商榷)
 }
 
@@ -298,7 +290,7 @@ void server::socketinit()
     //关联接收数据的信号与更新界面
     connect(tcpServer,SIGNAL(updateServer(QByteArray,tcpsocket*,QString)),this,SLOT(updatetabelwidget(QByteArray,tcpsocket*,QString)));
     //关联连接断开与更新界面
-    connect(tcpServer,SIGNAL(disconnected(tcpsocket*)),this,SLOT(disconnected(tcpsocket*)));
+    connect(tcpServer,SIGNAL(disconnected(tcpsocket*,QString)),this,SLOT(disconnected(tcpsocket*,QString)));
     //关联文件接收信号
     connect(tcpServer,SIGNAL(updateServer_file(qint64,qint64,QString,tcpsocket*,QString)),this,SLOT(updatefileview(qint64,qint64,QString,tcpsocket*,QString)));
     //关联新文件接收信号
@@ -406,6 +398,10 @@ void server::updatefileview(qint64 bytesreveived, qint64 totalbytes, QString fil
     if(this->filelist.contains(name)){
         QProgressBar *tem = this->filelist.value(name);
         tem->setValue(bytesreveived);
+    }
+    if(totalbytes == bytesreveived){
+        //从filelist中删除
+        this->filelist.remove(name);
     }
 }
 

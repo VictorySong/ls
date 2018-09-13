@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <cameraview.h>
 #include <httpserver.h>
+#include <QListWidgetItem>
 
 #include <QtGui>
 #include <QGraphicsView>
@@ -65,7 +66,7 @@ private:
 public slots:
     void updatetabelwidget(QByteArray,tcpsocket *,QString);         //更新已有连接界面显示
     void updatenewclient(QString,tcpsocket *);                      //有新连接时更新界面显示
-    void disconnected(tcpsocket *);                         //有连接断开时更新视
+    void disconnected(tcpsocket *,QString);                         //有连接断开时更新视
     void toolbar_actiontriggered(QAction *);       //工具栏action被点击
     void updatefileview(qint64,qint64,QString,tcpsocket*,QString);  //有文件传入时更新界面
     void updatefileview_new(qint64,qint64,QString,tcpsocket*,QString);  //有新文件传入时更新界面
