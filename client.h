@@ -7,6 +7,7 @@
 #include <tcpserver.h>
 #include <tcpsocket.h>
 #include <QFileDialog>
+#include <cameraview.h>
 
 namespace Ui {
 class client;
@@ -34,6 +35,8 @@ private:
     qint64 loadSize;   //每次发送数据的大小
     QString fileName;  //保存文件路径
     QByteArray outBlock;  //数据缓冲区，即存放每次要发送的数据
+
+    cameraview *cview;  //显示相机画面
 
     void socketinit();                  //初始化socket
 public slots:

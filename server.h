@@ -9,7 +9,6 @@
 #include <instruction.h>
 #include <QToolBar>
 #include <QProgressBar>
-#include <cameraview.h>
 #include <httpserver.h>
 #include <QListWidgetItem>
 
@@ -47,8 +46,6 @@ private:
     QUdpSocket *udpsender;              //udp发送
     tcpserver *tcpServer;              //tcp监听
     udpbroad *udpbro;                   //广播服务器ip 和端口的 线程
-    cameraview *cview;
-    QCamera *camera;
     httpserver *http_server; //简单的http服务器用来作为apk下载源
 
     QPixmap pix;                            //图层

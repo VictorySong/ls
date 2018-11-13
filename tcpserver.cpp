@@ -99,6 +99,7 @@ void tcpserver::slotDisconnected(tcpsocket *clientsocket)
             QMutableListIterator<tcpsocket*> k(tcpphonesocket);
             QJsonObject tem ;
             tem.insert("id",i.key());
+            tem.insert("type","status");
             tem.insert("status",0);             //状态为0表示断开
             QJsonDocument tem2;
             tem2.setObject(tem);

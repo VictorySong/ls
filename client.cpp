@@ -19,11 +19,14 @@ client::client(QWidget *parent ) :
     bytesToWrite = 0;
 
     socketinit();
+
+    cview = new cameraview();
 }
 
 client::~client()
 {
     qDebug()<<"调用客户端析构函数";
+    delete cview;
     delete udpServer;
     delete tcpsender;
 }
@@ -146,6 +149,14 @@ void client::newdata(QByteArray mess, tcpsocket *clientsocket)
                                                      QMessageBox::Yes ,
                                                     QMessageBox::Yes)){
 
+        }
+        if(result["order"].toString() == QString("videostart")){
+            cview->show();
+            cview->record();
+        }
+        if(result["order"].toString() == QString("videostop")){
+            cview->hide();
+            cview->disrecord();
         }
     }
 }

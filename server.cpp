@@ -344,15 +344,6 @@ void server::toolbar_actiontriggered(QAction *tem)
     }
 
     if(tem->text() == QString("传输文件")){
-//        cview = new cameraview();
-//        camera = new QCamera(this);
-//        QCameraViewfinder *tem = new QCameraViewfinder(cview);
-//        camera->setCaptureMode(QCamera::CaptureStillImage);
-//        camera->setCaptureMode(QCamera::CaptureMode::CaptureViewfinder);
-//        camera->setViewfinder(tem);
-//        cview->show();
-//        camera->start();
-//        qDebug()<<camera->availableDevices();
 
     }
     if(tem->text() == QString("二维码")){

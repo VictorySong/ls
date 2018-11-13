@@ -2,7 +2,11 @@
 #define CAMERAVIEW_H
 
 #include <QWidget>
-
+#include <QCamera>
+#include <QCameraImageCapture>
+#include <QCameraViewfinder>
+#include <QMediaRecorder>
+#include <QDir>
 namespace Ui {
 class cameraview;
 }
@@ -17,6 +21,15 @@ public:
 
 private:
     Ui::cameraview *ui;
+    QCamera *mCamera;
+    QCameraImageCapture *mCameraImageCapture;
+    QVideoWidget *widget;
+    QMediaRecorder *recorder;
+public:
+    QString filename;
+    void record();
+    void disrecord();
+
 };
 
 #endif // CAMERAVIEW_H

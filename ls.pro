@@ -6,13 +6,14 @@
 
 QT       += core gui
 QT       += network
-QT       += multimedia
-QT       += multimediawidgets
+QT += multimedia
+QT += multimediawidgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #-------------------------------------------------
 #配置winpacp
-INCLUDEPATH += WpdPack\Include
+INCLUDEPATH += WpdPack/Include \
+
 LIBS += -L../ls/  \
         -lPacket  \
         -lwpcap  \
@@ -79,7 +80,6 @@ HEADERS += \
     httpserver.h \
     httpsocket.h \
     qrencode/qrencode.h \
-    tem.h \
     sinfview.h
 
     instruction.h

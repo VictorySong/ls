@@ -23,9 +23,6 @@
 #include <QGraphicsItem>
 #include "wlan.h"
 #include "headrectitem.h"
-#include <QCamera>
-#include <QCameraViewfinder>
-#include <QCameraInfo>
 #include "sinfview.h"
 
 #ifndef IPTOSBUFFERS
